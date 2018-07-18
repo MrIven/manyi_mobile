@@ -1,1 +1,2 @@
-# manyi_mobile
+# vue-mobile
+a project of mobile
