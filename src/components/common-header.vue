@@ -83,7 +83,7 @@ export default {
       .h(50);
       .left(25);
       .top(25);
-      background-image: url("../assets/imgs/w-back.svg");
+      background-image: url("../assets/imgs/index/arrow-left.svg");
       background-size: cover;
     }
   }

@@ -3,8 +3,8 @@
  * @param params
  * @returns {*}
  */
-import {fetch, baseUrl} from 'config/index'
+import {get, baseUrl} from 'config/index'
 // 登录接口
 export function loginUserNo(params) {
-  return fetch(`${baseUrl}/root/login/checkMemberLogin`, params)
+  return get(`${baseUrl}/test26`, params)
 }

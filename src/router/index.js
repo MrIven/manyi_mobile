@@ -43,19 +43,14 @@ export default new Router({
           component: (resolve) => require(['@/pages/index/home'], resolve)
         },
         {
-          path: '/story',
-          name: 'story',
-          component: (resolve) => require(['@/pages/index/story'], resolve)
+          path: '/income',
+          name: 'income',
+          component: (resolve) => require(['@/pages/index/income'], resolve)
         },
         {
-          path: '/footprints',
-          name: 'footprints',
-          component: (resolve) => require(['@/pages/index/footprints'], resolve)
-        },
-        {
-          path: '/day',
-          name: 'day',
-          component: (resolve) => require(['@/pages/index/day'], resolve)
+          path: '/team',
+          name: 'team',
+          component: (resolve) => require(['@/pages/index/team'], resolve)
         }
       ]
     },

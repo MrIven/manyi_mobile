@@ -1,4 +1,4 @@
-@baseFontSize: 75;
+@baseFontSize: 37.5;
 .px2rem(@name, @px) {
   @name: @px / @baseFontSize * 1rem;
 }
@@ -17,6 +17,14 @@
 
 .h(@px) {
   height: @px / @baseFontSize * 1rem;
+}
+
+.height(@px){
+  height: @px / @baseFontSize * 1rem;
+}
+
+.width(@px){
+  width:  @px / @baseFontSize * 1rem;
 }
 
 .minh(@px) {

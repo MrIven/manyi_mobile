@@ -43,10 +43,20 @@ axios.interceptors.response.use(
   }
 )
 // 封装post请求
-export function fetch(requestUrl, params = '') {
+export function fetch(requestUrl, params) {
   return axios({
     url: requestUrl,
     method: 'post',
+    data: {
+      'body': params
+    }
+  })
+}
+// 封装post请求
+export function get(requestUrl, params) {
+  return axios({
+    url: requestUrl,
+    method: 'get',
     data: {
       'body': params
     }
