@@ -5,20 +5,12 @@
 ## Build Setup
 
 ``` bash
-# install dependencies
-npm install
+1.安装node环境，执行npm install ,也可安装cnpm 然后执行，cnpm install ,国内镜像
+下载速度会快很多
 
-# serve with hot reload at localhost:8080
-npm run dev or npm run dev:test
+2.运行，npm start || npm run dev
 
-# use mock data
-npm run dev:mock
-
-# build for production with minification
-npm run build or npm run build:test
-
-# build for production and view the bundle analyzer report
-npm run build --report
+3.打包编译，npm run build
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
