@@ -55,6 +55,7 @@
         <div class="to-invitation">去邀请</div>
       </div>
       <div class="team-box">
+        <button @click="login">test接口</button>
         <div class="my-team">
           我的团队
         </div>
@@ -103,7 +104,6 @@
             @confirm="dateConfirm"
             v-model="pickerValue">
           </mt-datetime-picker>
-          <button @click="login">test接口</button>
         </div>
       </div>
     </div>
@@ -120,7 +120,6 @@ import * as homeApi from 'api/home-api'
 import { ERR_OK } from 'config/index'
 import axios from 'axios'
 
-Vue.component(Picker.name, Picker)
 Vue.component(DatetimePicker.name, DatetimePicker)
 
 export default {
@@ -138,6 +137,12 @@ export default {
     }),
     openPicker() {
       this.$refs.picker.open()
+      let a = document.getElementsByClassName('picker-slot')
+      for (let i = 0; a && i < a.length; i++) {
+        if (i === 2) {
+          a[i].style.display = 'none'
+        }
+      }
     },
     dateConfirm(item) {
       this.pickerShowValue = moment(item).format('YYYY-MM')
