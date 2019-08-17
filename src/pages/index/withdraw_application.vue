@@ -59,6 +59,7 @@ export default {
     },
     toWithdrawMoney(flag) {
       this.popupVisible = true
+      this.$router.back()
       if (flag) {
       }
     },

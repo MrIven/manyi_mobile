@@ -1,10 +1,10 @@
 module.exports = {
 	'/root/': {
-		target: 'http://localhost:8090/app/',
+		target: 'http://www.easiroam.cn/',
 		changeOrigin: true
 	},
   '/': {
-		target: 'http://localhost:8090/app/',
+		target: 'http://www.easiroam.cn/',
 		changeOrigin: true
 	}
 }

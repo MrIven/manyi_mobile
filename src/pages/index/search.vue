@@ -19,7 +19,7 @@
             </span>
           <span class="reward-desc">{{item.value2}}</span>
           <div class="head-portrait">
-            <div class="portrait-img"></div>
+            <img src="../../assets/imgs/income/head-portrait.jpeg">
           </div>
           <div class="custom-type">{{item.value3}}</div>
           <div class="from">{{item.value4}}</div>
@@ -43,6 +43,7 @@ export default {
     return {
       tittle: '搜索',
       searchValue: '',
+      allLoaded: false,
       list: [
         {
           value1: '+132',
@@ -90,6 +91,58 @@ export default {
     ...mapMutations({
       setNum: 'SET_NUM'
     }),
+    // 下拉刷新
+    loadTop() {
+      this.curPage = 1
+      this.getChildLocationList()
+    },
+    // 加载更多数据
+    loadBottom() {
+      this.curPage += 1
+      this.getChildLocationList()
+    },
+    getChildLocationList() {
+      this.allLoaded = false
+      let dateCreated = this.dateCreated
+      this.$api.childLocationList({
+        params: {
+          id: this.uid,
+          cid: this.curChildId,
+          dateCreated: dateCreated,
+          isPager: 1, // 0-不分页，1-分页；
+          pageNum: this.curPage, // 第几页
+          pageSize: this.pageSize // 每页显示数据条数
+        }
+      }).then(res => {
+        if (res.code === 2000) {
+          if (res.row) {
+            let _list = res.row.list
+            this.curPage = res.row.pageNum
+            this.pageSize = res.row.pageSize
+            let totalPages = res.row.pages // 总页数
+            // 下拉刷新 加载更多
+            setTimeout(() => {
+              this.$refs.loadmore.onTopLoaded()
+              this.$refs.loadmore.onBottomLoaded()
+            }, 1000)
+            if (this.curPage === 1) {
+              this.list = _list
+            } else {
+              if (this.curPage === totalPages) {
+                this.allLoaded = true // 若数据已全部获取完毕
+              }
+              this.list = this.list.concat(_list) // 数组追加
+            }
+          } else {
+            this.$refs.loadmore.onTopLoaded()
+            this.allLoaded = true // 若数据已全部获取完毕
+            this.list = []
+          }
+        } else {
+          this.$refs.loadmore.onTopLoaded()
+        }
+      })
+    },
     scrollTop() {
       document.documentElement.scrollTop = document.body.scrollTop = 0
     },
@@ -214,12 +267,11 @@ export default {
       .pl(15);
       .w(48);
       .h(48);
-      .portrait-img{
-        .b-radius(25);
-        .w(48);
+      img{
+        .b-radius(64);
+        filter: saturate(1.0) hue-rotate(0deg) brightness(1.0) contrast(1.0);
+        .w(52);
         .h(48);
-        background-image: url("../../assets/imgs/income/head-portrait.jpeg");
-        background-size: cover;
       }
     }
     .custom-type{

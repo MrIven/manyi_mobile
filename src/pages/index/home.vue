@@ -49,48 +49,49 @@
     </div>
     <div class="content-box">
       <div class="invitation-box">
-        <div class="invitation-img"></div>
+        <div class="invitation-img">
+          <img src="../../assets/imgs/index/invitation-img.jpg" class="picture-img">
+        </div>
         <div class="invitation-desc-1">邀请好友，拿现金</div>
         <div class="invitation-desc-2">邀请奖励无上限</div>
         <button class="to-invitation">去邀请</button>
       </div>
       <div class="team-box">
-        <button @click="login">test接口</button>
         <div class="my-team">
           我的团队
         </div>
         <div class="number-invitees">
-          <span>邀请人数</span>
+          <span>总人数</span>
           <span class="team-span-style">100</span>
         </div>
         <div class="number-comsumers">
-          <span>消费人数</span>
-          <span class="team-span-style">99</span>
+          <span>直推客户</span>
+          <span class="team-span-style">88888</span>
         </div>
         <div class="total-money">
-          <span>累计消费（元）</span>
+          <span>间接客户</span>
           <span class="team-span-style">18698</span>
         </div>
       </div>
       <div class="reward-box">
-        <div class="month-reward" >月度奖励</div>
+        <div class="month-reward" >月度收益</div>
         <div class="date-title">{{pickerShowValue}}</div>
         <div class="icon-down" @click="openPicker"></div>
         <div class="rule-desc">规则说明</div>
         <div class="icon-right"></div>
         <div class="reward-title">
           <div class="number-invitation-reward">
-            <span>奖励人数</span>
+            <span>团队邀请人数</span>
             <span class="reward-span-style">1000000</span>
           </div>
-          <div class="number-comsumers-reward">
+         <!-- <div class="number-comsumers-reward">
             <span>消费人数</span>
             <span class="reward-span-style">999999</span>
           </div>
           <div class="month-comsume">
             <span>本月消费</span>
             <span class="reward-span-style">15874586</span>
-          </div>
+          </div>-->
           <div class="this-month-reward">
             <span>本月奖励</span>
             <span class="reward-span-style">856254.88</span>
@@ -117,8 +118,6 @@ import moment from 'moment'
 import Vue from 'vue'
 import {DatetimePicker, Picker} from 'mint-ui'
 import * as homeApi from 'api/home-api'
-import { ERR_OK } from 'config/index'
-import axios from 'axios'
 
 Vue.component(DatetimePicker.name, DatetimePicker)
 
@@ -200,7 +199,7 @@ export default {
     line-height: 150%;
     text-align: center;
     .header-top{
-      .w(375);
+      .w(374);
       .h(59);
       color: rgba(255, 255, 255, 1);
       .fs(18);
@@ -255,7 +254,7 @@ export default {
       position: absolute;
       .left(19);
       .top(84);
-      .w(49);
+      .w(52);
       .h(52);
       .b-radius(75);
       .border-solid(4,rgba(255, 255, 255, 1));
@@ -453,8 +452,11 @@ export default {
         .h(59);
         .left(16);
         .top(9);
-        background-image: url("../../assets/imgs/index/invitation-img.jpg");
-        background-size: cover;
+        img{
+          .w(52);
+          .h(52);
+          filter: saturate(1.0) hue-rotate(0deg) brightness(1.0) contrast(1.0);
+        }
       }
       .invitation-desc-1{
         position: absolute;
@@ -487,6 +489,7 @@ export default {
         .top(23);
         .fs(14);
         .b-radius(23);
+        border: none;
         color: rgba(255, 255, 255, 1);
         background-color: rgba(255, 87, 51, 1);
         line-height: 170%;
@@ -651,7 +654,7 @@ export default {
         }
         .this-month-reward{
           position: absolute;
-          .left(287);
+          .left(132);
         }
         .reward-span-style{
           color: rgba(0, 0, 0, 1);

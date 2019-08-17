@@ -5,9 +5,9 @@
       <div class="firt-desc">
         <span>可提现金额</span>
         <span class="record-desc">提现记录</span>
-        <span class="withdraw-arrow-right">&nbsp;&nbsp;&nbsp;</span>
+        <span class="withdraw-arrow-right" @click='withdrawRecord'>&nbsp;&nbsp;&nbsp;</span>
       </div>
-      <div class="money-style">￥999.99</div>
+      <div class="money-style">￥{{allAmount}}</div>
       <div class="split-box"></div>
       <div class="desc-1">选择收款方式</div>
       <div :class="[isActive?'ali-account1':'ali-account2']" @click="selectPaymentType(true)">
@@ -57,6 +57,7 @@
 
 <script>
 import commonHeader from 'common/common-header'
+import * as withdrawApi from 'api/withdraw-api'
 import {Popup} from 'mint-ui'
 import Vue from 'vue'
 
@@ -64,12 +65,26 @@ Vue.component(Popup.name, Popup)
 export default {
   data() {
     return {
+      allAmount: 0,
       tittle: '提现申请',
       isActive: true,
       popupVisible: false
     }
   },
+  mounted: function () {
+    withdrawApi.canWithdrawalAmount({user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f'}).then((res) => {
+      console.log(res)
+      let {data: {can_get_price: price}} = res
+      if (price) {
+        this.allAmount = price
+      }
+    }).catch(() => {
+    })
+  },
   methods: {
+    withdrawRecord() {
+      this.$router.togo('/withdrawRecord')
+    },
     confirm() {
       this.$router.togo('/withdrawApplication')
     },

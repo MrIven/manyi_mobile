@@ -56,7 +56,7 @@
             </span>
             <span class="reward-desc">{{item.value2}}</span>
             <div class="head-portrait">
-              <div class="portrait-img"></div>
+              <img src="../../assets/imgs/income/head-portrait.jpeg">
             </div>
             <div class="custom-type">{{item.value3}}</div>
             <div class="from">{{item.value4}}</div>
@@ -479,12 +479,11 @@ export default {
           .pl(15);
           .w(48);
           .h(48);
-          .portrait-img{
-            .b-radius(25);
-            .w(48);
+          img{
+            .b-radius(64);
+            filter: saturate(1.0) hue-rotate(0deg) brightness(1.0) contrast(1.0);
+            .w(52);
             .h(48);
-            background-image: url("../../assets/imgs/income/head-portrait.jpeg");
-            background-size: cover;
           }
         }
         .custom-type{
