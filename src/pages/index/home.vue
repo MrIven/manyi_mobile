@@ -17,10 +17,10 @@
       <div class="user-mobile">
         18987548569
       </div>
-      <div class="personal-setting">
+      <div class="personal-setting" @click="personalSetting">
         个人设置
       </div>
-      <div class="right-icon">
+      <div class="right-icon" @click="personalSetting">
         <span class="right-arrow"></span>
       </div>
     </div>
@@ -52,7 +52,7 @@
         <div class="invitation-img"></div>
         <div class="invitation-desc-1">邀请好友，拿现金</div>
         <div class="invitation-desc-2">邀请奖励无上限</div>
-        <div class="to-invitation">去邀请</div>
+        <button class="to-invitation">去邀请</button>
       </div>
       <div class="team-box">
         <button @click="login">test接口</button>
@@ -126,7 +126,7 @@ export default {
   data () {
     return {
       pickerValue: new Date(),
-      pickerShowValue: moment(new Date()).format('YYYY-DD'),
+      pickerShowValue: moment(new Date()).format('YYYY-MM'),
       num: 0
     }
   },
@@ -135,6 +135,9 @@ export default {
     ...mapMutations({
       setNum: 'SET_NUM'
     }),
+    personalSetting() {
+      this.$router.togo('/personal_setting')
+    },
     openPicker() {
       this.$refs.picker.open()
       let a = document.getElementsByClassName('picker-slot')
@@ -147,11 +150,8 @@ export default {
     dateConfirm(item) {
       this.pickerShowValue = moment(item).format('YYYY-MM')
     },
-    todetail() {
-      this.$router.togo('/Home/Detail')
-    },
     toWithdrawCash() {
-      this.$router.togo('/income')
+      this.$router.goRight('/withdraw')
     },
     login() {
       let params = {
@@ -232,7 +232,7 @@ export default {
           letter-spacing: 0px;
           color: rgba(255, 255, 255, 1);
           .fs(15);
-          line-height: 130%;
+          line-height: 150%;
           text-align: left;
         }
         .title-content{
@@ -240,13 +240,14 @@ export default {
           display: inline-block;
           .w(150);
           .h(56);
-          .left(150);
+          .left(120);
           .top(2);
           letter-spacing: 0px;
           color: rgba(255, 255, 255, 1);
-          .fs(18);
-          line-height: 130%;
-          text-align: left;
+          .fs(17);
+          line-height: 150%;
+          text-align: center;
+          font-weight: bold;
         }
       }
     }
@@ -488,7 +489,7 @@ export default {
         .b-radius(23);
         color: rgba(255, 255, 255, 1);
         background-color: rgba(255, 87, 51, 1);
-        line-height: 250%;
+        line-height: 170%;
         text-align: center;
         font-weight: bold;
       }

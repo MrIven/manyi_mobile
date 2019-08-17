@@ -2,16 +2,12 @@
     <div class="header-box">
       <div class="left-icon">
         <span v-if="showback" @click="back" class="icon-back"></span>
+        <span v-if="showback" @click="back" class="icon-back-desc">返回</span>
       </div>
-      <div class="header-tittle">
-        <span v-if="showinput">
-          <cus-input></cus-input>
-        </span>
-        <span v-if="!showinput">{{tittle}}</span>
+      <div class="header-title">
+        <span v-if="showback" class="title-desc">{{tittle}}</span>
       </div>
-      <div class="right-icon">
-        <span v-if="showmore" class="icon"></span>
-      </div>
+      <div class="header-more"></div>
     </div>
 </template>
 
@@ -32,7 +28,7 @@ export default {
     },
     showinput: {
       type: Boolean,
-      default: false
+      default: true
     },
     tittle: {
       type: String,
@@ -62,13 +58,8 @@ export default {
 @import "~styles/index.less";
 @import "~styles/variable.less";
 .header-box{
-  // position: fixed;
-  // top: 0;
-  // left: 0;
-  width: 100%;
-  .h(100);
-  .lh(100);
-  background-color: @base-color;
+  .h(59);
+  background-color: rgba(42, 130, 228, 1);
   color: @base-header-color;
   .fs(@base-header-size);
   display: flex;
@@ -78,31 +69,38 @@ export default {
     flex: 1;
     .icon-back{
       position: absolute;
-      display: inline-block;
-      .w(50);
-      .h(50);
-      .left(25);
-      .top(25);
+      .w(28);
+      .h(28);
+      .left(4);
+      .top(14);
       background-image: url("../assets/imgs/index/arrow-left.svg");
       background-size: cover;
     }
-  }
-  .header-tittle{
-    flex: 3;
-  }
-  .right-icon{
-    position: relative;
-    flex: 1;
-    .icon{
+    .icon-back-desc{
       position: absolute;
-      display: inline-block;
-      .w(50);
-      .h(50);
-      .right(25);
-      .top(25);
-      background-image: url("../assets/imgs/more.svg");
-      background-size: cover;
+      color: @base-header-color;
+      .fs(16);
+      .top(16);
+      .w(56);
+      .h(28);
+      .left(16);
     }
+  }
+  .header-title{
+    flex: 1;
+    .title-desc{
+      position: absolute;
+      .left(160);
+      .top(20);
+      .fs(18);
+      color: rgba(255, 255, 255, 1);
+      line-height: 150%;
+      text-align: center;
+      font-weight: bold;
+    }
+  }
+  .header-more{
+    flex: 1;
   }
 }
 </style>

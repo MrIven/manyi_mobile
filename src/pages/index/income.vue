@@ -15,7 +15,7 @@
       <div class="middle-word-1">可提现(元)</div>
       <div class="middle-word-2">结算中(元)</div>
       <div class="vertical-line"></div>
-      <div class="middle-word-3">我要提现</div>
+      <button class="middle-word-3">我要提现</button>
     </div>
     <div class="body-bottom">
       <div class="income-detail">
@@ -35,20 +35,35 @@
           v-model="pickerValue">
         </mt-datetime-picker>
       </div>
-      <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore">
-        <div class="detail-infos" v-for="(item, index) in list">
-          <div class="total-reward">+132.00</div>
-          <div class="reward-desc">累计奖励</div>
-          <div class="head-portrait"></div>
-          <div class="custom-type">直推客户</div>
-          <div class="from">来自: 李四</div>
-          <div class="buy-card">买卡</div>
-          <div class="card-money">10.00</div>
-          <div class="buy-traffic">买流量</div>
-          <div class="traffic-money">122.00</div>
-          <div class="phone">180 5896 8584</div>
+      <mt-loadmore
+        :top-method="loadTop"
+        :bottom-method="loadBottom"
+        auto-fill='true'
+        :bottom-all-loaded="allLoaded" ref="loadmore">
+        <div  class="detail-infos">
+          <div class="detail-info" v-for="(item, index) in list" :key="index">
+            <span class="total-reward">
+              {{item.value1}}
+            </span>
+            <span class="reward-desc">{{item.value2}}</span>
+            <div class="head-portrait">
+              <div class="portrait-img"></div>
+            </div>
+            <div class="custom-type">{{item.value3}}</div>
+            <div class="from">{{item.value4}}</div>
+            <div class="buy-card">{{item.value5}}</div>
+            <div class="card-money">{{item.value6}}</div>
+            <div class="buy-traffic">{{item.value7}}</div>
+            <div class="traffic-money">{{item.value8}}</div>
+            <div class="phone">{{item.value9}}</div>
+          </div>
         </div>
       </mt-loadmore>
+      <div class="scrollTop" @click="scrollTop">
+        <div class="icon-arrow-up">
+
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -65,12 +80,62 @@ export default {
   data () {
     return {
       pickerValue: new Date(),
-      pickerShowValue: moment(new Date()).format('YYYY年DD月'),
+      pickerShowValue: moment(new Date()).format('YYYY年MM月'),
       allLoaded: false,
+      list: [
+        {
+          value1: '+132.00',
+          value2: '累计奖励',
+          value3: '直推客户',
+          value4: '来自: 李四',
+          value5: '买卡',
+          value6: '10.00',
+          value7: '买流量',
+          value8: '122.00',
+          value9: '180 5896 8584'
+
+        }, {
+          value1: '+132.00',
+          value2: '累计奖励',
+          value3: '直推客户',
+          value4: '来自: 李四',
+          value5: '买卡',
+          value6: '10.00',
+          value7: '买流量',
+          value8: '122.00',
+          value9: '180 5896 8584'
+
+        }, {
+          value1: '+132.00',
+          value2: '累计奖励',
+          value3: '直推客户',
+          value4: '来自: 李四',
+          value5: '买卡',
+          value6: '10.00',
+          value7: '买流量',
+          value8: '122.00',
+          value9: '180 5896 8584'
+
+        }, {
+          value1: '+132.00',
+          value2: '累计奖励',
+          value3: '直推客户',
+          value4: '来自: 李四',
+          value5: '买卡',
+          value6: '10.00',
+          value7: '买流量',
+          value8: '122.00',
+          value9: '180 5896 8584'
+
+        }
+      ],
       curPage: 1
     }
   },
   methods: {
+    scrollTop() {
+      document.documentElement.scrollTop = document.body.scrollTop = 0
+    },
     dateConfirm(item) {
       this.pickerShowValue = moment(item).format('YYYY年MM月')
     },
@@ -134,9 +199,6 @@ export default {
           this.$refs.loadmore.onTopLoaded()
         }
       })
-    },
-    todetail() {
-      this.$router.togo('/Home/Detail')
     }
   }
 }
@@ -146,229 +208,372 @@ export default {
 <style scoped lang="less">
 @import "~styles/index.less";
 @import "~styles/variable.less";
+@import "~styles/base.less";
 .body-header{
   position: absolute;
-  width: 375px;
-  height: 191px;
+  .w(374);
+  .h(191);
   color: rgba(80, 80, 80, 1);
   background-color: rgba(42, 130, 228, 1);
-  font-size: 14px;
+  .fs(14);
   line-height: 150%;
   text-align: center;
+  .header-top{
+    position: absolute;
+    .w(374);
+    .h(59);
+    .left(1);
+    .top(0);
+    color: rgba(255, 255, 255, 1);
+    .fs(18);
+    line-height: 150%;
+    text-align: center;
+    font-weight: bold;
+    .left-icon{
+      position: absolute;
+      .w(28);
+      .h(28);
+      .left(6);
+      .top(31);
+      .fs(28);
+      color: rgba(255, 255, 255, 1);
+      background-image: url("../../assets/imgs/index/arrow-left.svg");
+      background-size: cover;
+    }
+    .return-back{
+      position: absolute;
+      .w(52);
+      .h(22);
+      .left(30);
+      .top(35);
+      letter-spacing: 0px;
+      color: rgba(255, 255, 255, 1);
+      .fs(15);
+      line-height: 130%;
+      text-align: left;
+    }
+    .income{
+      position: absolute;
+      .w(52);
+      .h(22);
+      .left(160);
+      .top(32);
+      letter-spacing: 0px;
+      color: rgba(255, 255, 255, 1);
+      .fs(18);
+      line-height: 150%;
+      text-align: center;
+      font-weight: bold;
+    }
+  }
 }
 .body-middle{
   position: absolute;
   z-index: 5;
-  width: 349px;
-  height: 204px;
-  left: 13px;
-  top: 79px;
+  .w(349);
+  .h(204);
+  .left(13);
+  .top(79);
   color: rgba(80, 80, 80, 1);
   background-color: rgba(255, 255, 255, 1);
-  font-size: 14px;
+  .fs(14);
   line-height: 150%;
   text-align: center;
   .middle-word-0{
     position: absolute;
-    width: 77px;
-    height: 20px;
-    left: 20px;
-    top: 20px;
+    .w(77);
+    .h(20);
+    .left(20);
+    .top(20);
     color: rgba(0, 0, 0, 1);
-    font-size: 12px;
+    .fs(12);
     line-height: 150%;
     text-align: left;
   }
   .middle-value-0{
     position: absolute;
-    width: 152px;
-    height: 30px;
-    left: 97px;
-    top: 10px;
+    .w(152);
+    .h(30);
+    .left(97);
+    .top(10);
     color: rgba(0, 0, 0, 1);
-    font-size: 26px;
+    .fs(26);
     line-height: 150%;
     text-align: left;
     font-weight: bold;
   }
   .middle-value-1,.middle-value-2{
     position: absolute;
-    width: 104px;
-    height: 27px;
-    left: 51px;
-    top: 66px;
+    .w(104);
+    .h(27);
+    .left(51);
+    .top(66);
     color: rgba(0, 0, 0, 1);
-    font-size: 24px;
+    .fs(24);
     line-height: 150%;
     text-align: center;
     font-weight: bold;
   }
   .middle-value-2{
-    left: 197px;
+    .left(197);
   }
   .middle-word-1,.middle-word-2{
     position: absolute;
-    width: 104px;
-    height: 27px;
-    left: 51px;
-    top: 93px;
+    .w(104);
+    .h(27);
+    .left(51);
+    .top(93);
     color: rgba(166, 166, 166, 1);
-    font-size: 12px;
+    .fs(12);
     line-height: 150%;
     text-align: center;
   }
   .middle-word-2{
-    left: 197px;
+    .left(197);
   }
   .vertical-line{
     position: absolute;
-    width: 1px;
-    height: 60px;
-    left: 174px;
-    top: 63px;
+    .w(1);
+    .h(60);
+    .left(174);
+    .top(63);
     color: rgba(80, 80, 80, 1);
     background-color: rgba(153, 153, 153, 1);
-    font-size: 14px;
+    .fs(14);
     line-height: 150%;
     text-align: center;
   }
   .middle-word-3{
     position: absolute;
-    width: 149px;
-    height: 42px;
-    left: 100px;
-    top: 142px;
+    .w(149);
+    .h(42);
+    .left(100);
+    .top(142);
     color: rgba(255, 255, 255, 1);
     background-color: rgba(255, 87, 51, 1);
-    border-radius: 21px;
-    font-size: 18px;
-    line-height: 250%;
+    .b-radius(21);
+    .fs(18);
+    line-height: 150%;
     text-align: center;
   }
 }
 .body-bottom{
   position: absolute;
   z-index: 4;
-  width: 374px;
-  height: 400px;
-  left: 1px;
-  top: 209px;
+  .w(374);
+  height: auto;
+  .left(1);
+  .top(209);
   color: rgba(80, 80, 80, 1);
   background-color: rgba(237, 240, 245, 1);
-  font-size: 14px;
+  .fs(14);
   line-height: 150%;
   text-align: center;
   .income-detail{
     position: absolute;
-    width: 375px;
-    height: 87px;
-    top: 90px;
+    .w(374);
+    .h(87);
+    .top(90);
     color: rgba(80, 80, 80, 1);
     background-color: rgba(255, 255, 255, 1);
-    font-size: 14px;
+    .fs(14);
     line-height: 150%;
     text-align: center;
     .detail-word{
       position: absolute;
-      width: 155px;
-      height: 26px;
-      left: 17px;
-      top: 17px;
+      .w(155);
+      .h(26);
+      .left(17);
+      .top(17);
       color: rgba(0, 0, 0, 1);
-      font-size: 20px;
+      .fs(20);
       line-height: 150%;
       text-align: left;
       font-weight: bold;
     }
     .year-month,.all,.sort-desc{
       position: absolute;
-      width: 95px;
-      height: 24px;
-      left: 17px;
-      top: 48px;
+      .w(95);
+      .h(24);
+      .left(17);
+      .top(48);
       color: rgba(42, 130, 228, 1);
-      font-size: 16px;
+      .fs(16);
       line-height: 150%;
       text-align: left;
       font-weight: bold;
     }
     .all{
       position: absolute;
-      width: 47px;
-      left: 167px;
+      .w(47);
+      .left(167);
     }
     .sort-desc{
       position: absolute;
-      width: 135px;
-      height: 26px;
-      left: 226px;
-      top: 47px;
+      .w(135);
+      .h(26);
+      .left(226);
+      .top(47);
       color: rgba(166, 166, 166, 1);
       text-align: right;
     }
     .icon-down-1,.icon-down-2{
       position: absolute;
-      width: 24px;
-      height: 24px;
-      left: 109px;
-      top: 48px;
-      font-size: 24px;
+      .w(24);
+      .h(24);
+      .left(109);
+      .top(48);
+      .fs(24);
       color: rgba(42, 130, 228, 1);
       background-image: url("../../assets/imgs/index/arrow-down.svg");
       background-size: cover;
     }
     .icon-down-2{
       position: absolute;
-      left: 200px;
+      .left(200);
     }
   }
-}
-.header-top{
-  position: absolute;
-  width: 375px;
-  height: 59px;
-  left: 1px;
-  top: 0px;
-  color: rgba(255, 255, 255, 1);
-  font-size: 18px;
-  line-height: 150%;
-  text-align: center;
-  font-weight: bold;
-}
-.left-icon{
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  left: 6px;
-  top: 31px;
-  font-size: 28px;
-  color: rgba(255, 255, 255, 1);
-  background-image: url("../../assets/imgs/index/arrow-left.svg");
-  background-size: cover;
-}
-.return-back{
-  position: absolute;
-  width: 52px;
-  height: 22px;
-  left: 30px;
-  top: 35px;
-  letter-spacing: 0px;
-  color: rgba(255, 255, 255, 1);
-  font-size: 15px;
-  line-height: 130%;
-  text-align: left;
-}
-.income{
-  position: absolute;
-  width: 52px;
-  height: 22px;
-  left: 160px;
-  top: 32px;
-  letter-spacing: 0px;
-  color: rgba(255, 255, 255, 1);
-  font-size: 18px;
-  line-height: 150%;
-  text-align: center;
-  font-weight: bold;
+  .detail-infos{
+    position: absolute;
+    .w(372);
+    .top(188);
+    .mb(60);
+    height: auto;
+    background: rgba(237, 240, 245, 1);
+    .detail-info{
+      position: relative;
+      .w(374);
+      .h(110);
+      .mt(10);
+      color: rgba(80, 80, 80, 1);
+      background-color: rgba(255, 255, 255, 1);
+      .fs(14);
+      line-height: 150%;
+      text-align: center;
+      .reward-desc{
+        float: left;
+        .h(20);
+        .pt(34);
+        color: rgba(0, 0, 0, 1);
+        .fs(12);
+        line-height: 150%;
+        text-align: left;
+      }
+      .total-reward{
+        float: left;
+        .pt(24);
+        .pl(15);
+        .h(28);
+        color: rgba(255, 87, 51, 1);
+        .fs(22);
+        line-height: 150%;
+        text-align: left;
+        font-weight: bold;
+      }
+      .head-portrait{
+        float: right;
+        .pt(16);
+        .pr(15);
+        .w(48);
+        .h(48);
+        .portrait-img{
+          .b-radius(25);
+          .w(48);
+          .h(48);
+          background-image: url("../../assets/imgs/income/head-portrait.jpeg");
+          background-size: cover;
+        }
+      }
+      .custom-type{
+        clear: left;
+        float: left;
+        .pl(15);
+        .pt(2);
+        color: rgba(255, 87, 51, 1);
+        .fs(14);
+        line-height: 150%;
+        text-align: left;
+      }
+      .from{
+        clear: right;
+        float: right;
+        .pr(15);
+        color: rgba(0, 0, 0, 1);
+        .fs(14);
+        line-height: 150%;
+        text-align: right;
+        font-weight: bold;
+      }
+      .buy-card{
+        clear: left;
+        float: left;
+        .pt(10);
+        .pl(15);
+        color: rgba(166, 166, 166, 1);
+        .fs(12);
+        line-height: 150%;
+        text-align: left;
+      }
+    .card-money{
+      float: left;
+      color: rgba(0, 0, 0, 1);
+      .fs(14);
+      .pl(2);
+      .pt(8);
+      line-height: 150%;
+      text-align: left;
+      font-weight: bold;
+    }
+    .buy-traffic{
+      float: left;
+      .pl(50);
+      .pt(10);
+      color: rgba(166, 166, 166, 1);
+      .fs(12);
+      line-height: 150%;
+      text-align: left;
+    }
+    .traffic-money{
+      float: left;
+      color: rgba(0, 0, 0, 1);
+      .pl(2);
+      .pt(8);
+      .fs(14);
+      line-height: 150%;
+      text-align: left;
+      font-weight: bold;
+    }
+    .phone{
+      clear: right;
+      float: right;
+      .pr(15);
+      color: rgba(0, 0, 0, 1);
+      .fs(14);
+      line-height: 150%;
+      text-align: right;
+    }
+    }
+  }
+  .scrollTop{
+    position: fixed;
+    .right(20);
+    .bottom(70);
+    .w(40);
+    .h(40);
+    background-color: rgba(0, 121, 255, 1);
+    .b-radius(21);
+    .icon-arrow-up{
+      position: fixed;
+      .right(28);
+      .bottom(82);
+      .w(24);
+      .h(20);
+      .fs(24);
+      line-height: 150%;
+      text-align: center;
+      background-image: url("../../assets/imgs/income/arrow-up-blue.svg");
+      background-size: cover;
+    }
+  }
 }
 </style>

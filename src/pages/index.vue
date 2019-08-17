@@ -52,6 +52,7 @@ export default {
 @import "~styles/variable.less";
 .nav-footer {
     position: fixed;
+    z-index: 10;
     left: 0px;
     bottom: 0px;
     width: 100%;

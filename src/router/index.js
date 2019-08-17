@@ -58,6 +58,31 @@ export default new Router({
       path: '/Home/Detail',
       name: 'Detail',
       component: (resolve) => require(['@/pages/detail'], resolve)
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: (resolve) => require(['@/pages/index/search'], resolve)
+    },
+    {
+      path: '/personal_setting',
+      name: 'personal_setting',
+      component: (resolve) => require(['@/pages/index/personal_setting'], resolve)
+    },
+    {
+      path: '/withdraw',
+      name: 'withdraw',
+      component: (resolve) => require(['@/pages/index/withdraw'], resolve)
+    },
+    {
+      path: '/withdrawRecord',
+      name: 'withdrawRecord',
+      component: (resolve) => require(['@/pages/index/withdraw_record'], resolve)
+    },
+    {
+      path: '/withdrawApplication',
+      name: 'withdrawApplication',
+      component: (resolve) => require(['@/pages/index/withdraw_application'], resolve)
     }
   ]
 })
