@@ -2,7 +2,7 @@
   <div class="content-box">
     <common-header :tittle="tittle"  :showback="true"></common-header>
     <div class="search-div">
-      <input v-model="searchValue" class="search-box"/>
+      <input v-model="searchValue" placeholder="请输入关键字" class="search-box"/>
     </div>
     <div class="icon_search" @click="search_click"></div>
     <mt-loadmore
@@ -11,21 +11,20 @@
       auto-fill='true'
       :bottom-all-loaded="allLoaded" ref="loadmore">
       <div  class="detail-infos">
-        <span class="search_desc" v-if="list.length > 0">搜索结果</span>
-        <span class="search_desc" v-else>暂无数据</span>
+        <span class="search_desc" v-if="list.length>0">搜索结果</span>
         <div class="detail-info" v-for="(item, index) in list" :key="index">
             <span class="total-reward">
-              {{item.value1}}
+              {{item.num}}
             </span>
-          <span class="reward-desc">{{item.value2}}</span>
+          <span class="reward-desc">累计邀请人数</span>
           <div class="head-portrait">
             <img src="../../assets/imgs/income/head-portrait.jpeg">
           </div>
-          <div class="custom-type">{{item.value3}}</div>
-          <div class="from">{{item.value4}}</div>
-          <div class="join-time">{{item.value6}}</div>
-          <div class="join-time-desc">{{item.value5}}</div>
-          <div class="phone">{{item.value9}}</div>
+          <div class="custom-type">{{item.type}}</div>
+          <div class="from">{{item.username}}</div>
+          <div class="join-time">{{item.time}}</div>
+          <div class="join-time-desc">加入时间</div>
+          <div class="phone">{{item.mobile}}</div>
         </div>
       </div>
     </mt-loadmore>
@@ -37,53 +36,17 @@
 
 <script>
 import {mapMutations, mapGetters, mapState} from 'vuex'
+import * as teamApi from 'api/team-api'
 import commonHeader from 'common/common-header'
 export default {
   data () {
     return {
       tittle: '搜索',
+      searchObject: {},
       searchValue: '',
       allLoaded: false,
-      list: [
-        {
-          value1: '+132',
-          value2: '累计邀请人数',
-          value3: '直推客户',
-          value4: '来自: 李四',
-          value5: '加入时间',
-          value6: '2019-07-01',
-          value9: '180 5896 8584'
-
-        }, {
-          value1: '+132',
-          value2: '累计邀请人数',
-          value3: '直推客户',
-          value4: '来自: 李四',
-          value5: '加入时间',
-          value6: '2019-07-01',
-          value9: '180 5896 8584'
-
-        }, {
-          value1: '+132',
-          value2: '累计邀请人数',
-          value3: '直推客户',
-          value4: '来自: 李四',
-          value5: '加入时间',
-          value6: '2019-07-01',
-          value9: '180 5896 8584'
-
-        }, {
-          value1: '+132',
-          value2: '累计邀请人数',
-          value3: '直推客户',
-          value4: '来自: 李四',
-          value5: '加入时间',
-          value6: '2019-07-01',
-          value9: '180 5896 8584'
-
-        }
-      ],
-      num: 0
+      num: 0,
+      list: []
     }
   },
   created() {},
@@ -103,23 +66,20 @@ export default {
     },
     getChildLocationList() {
       this.allLoaded = false
-      let dateCreated = this.dateCreated
-      this.$api.childLocationList({
-        params: {
-          id: this.uid,
-          cid: this.curChildId,
-          dateCreated: dateCreated,
+      teamApi.getUserRefferTeam(
+        {
+          user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
+          search: this.searchValue,
           isPager: 1, // 0-不分页，1-分页；
           pageNum: this.curPage, // 第几页
           pageSize: this.pageSize // 每页显示数据条数
-        }
-      }).then(res => {
-        if (res.code === 2000) {
-          if (res.row) {
-            let _list = res.row.list
-            this.curPage = res.row.pageNum
-            this.pageSize = res.row.pageSize
-            let totalPages = res.row.pages // 总页数
+        }).then(res => {
+        if (res.status === 200) {
+          if (res.data.data.user_data) {
+            let _list = res.data.data.user_data
+            this.curPage = _list.pageNum
+            this.pageSize = _list.pageSize
+            let totalPages = _list.pages // 总页数
             // 下拉刷新 加载更多
             setTimeout(() => {
               this.$refs.loadmore.onTopLoaded()
@@ -146,11 +106,25 @@ export default {
     scrollTop() {
       document.documentElement.scrollTop = document.body.scrollTop = 0
     },
+    search_click() {
+      if (this.searchValue) {
+        teamApi.getUserRefferTeam(
+          {
+            user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
+            search: this.searchValue
+          }).then((res) => {
+          if (res.status === 200) {
+            this.searchObject = res.data.data
+            this.list = this.searchObject.user_data
+          }
+        }).catch(() => {
+        })
+      } else {
+        alert('请输入搜索内容')
+      }
+    },
     todetail() {
       this.$router.togo('/Home/Detail')
-    },
-    search_click() {
-      alert(this.searchValue)
     }
   },
   components: {
@@ -195,7 +169,6 @@ export default {
       .fs(17);
       line-height: 150%;
       text-align: left;
-      font-weight: bold;
     }
   }
   .icon_search{

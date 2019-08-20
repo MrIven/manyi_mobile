@@ -25,26 +25,25 @@
         auto-fill='true'
         :bottom-all-loaded="allLoaded" ref="loadmore">
         <div  class="detail-infos">
-          <div class="detail-info" v-for="(item, index) in list" :key="index">
+          <div class="detail-info" v-for="(item, index) in withdrawRecordObject.user_data" :key="index">
             <div class="head-portrait" >
-              <div class="portrait-img" :style="background"></div>
+              <img class="portrait-img" src="../../assets/imgs/income/head-portrait.jpeg"/>
             </div>
             <div class="desc-0">
               <span class="total-reward">
-              {{item.value1}}
+              {{item.price}}
             </span>
-              <div class="from">{{item.value4}}</div>
+              <div class="from">{{item.time}}</div>
             </div>
             <div class="desc-1">
-              <div class="join-time-desc">{{item.value5}}</div>
-              <div class="join-time">{{item.value6}}</div>
+              <div class="join-time-desc">提现到{{item.type_desc}}</div>
+              <div class="join-time">账号：{{item.account}}</div>
             </div>
           </div>
         </div>
       </mt-loadmore>
       <div class="scrollTop" @click="scrollTop">
         <div class="icon-arrow-up">
-
         </div>
       </div>
     </div>
@@ -54,6 +53,7 @@
 <script>
 import {DatetimePicker, Picker} from 'mint-ui'
 import commonHeader from 'common/common-header'
+import * as withdrawRecordApi from 'api/withdraw-record-api'
 import moment from 'moment'
 import Vue from 'vue'
 
@@ -65,12 +65,7 @@ export default {
     return {
       pickerValue: new Date(),
       tittle: '提现记录',
-      background: {
-        backgroundImage: "url('../../assets/imgs/income/head-portrait.jpeg')",
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: '25px auto',
-        marginTop: '5px'
-      },
+      withdrawRecordObject: {},
       pickerShowValue: moment(new Date()).format('YYYY年MM月'),
       allLoaded: false,
       list: [
@@ -105,12 +100,30 @@ export default {
   components: {
     commonHeader
   },
+  mounted: function () {
+    withdrawRecordApi.fetchWithdrawalRecord(
+      {
+        user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
+        choose_date: moment(this.pickerValue).format('YYYY-MM')
+      }).then((res) => {
+      this.withdrawRecordObject = res.data.data
+    }).catch(() => {
+    })
+  },
   methods: {
     scrollTop() {
       document.documentElement.scrollTop = document.body.scrollTop = 0
     },
     dateConfirm(item) {
       this.pickerShowValue = moment(item).format('YYYY年MM月')
+      withdrawRecordApi.fetchWithdrawalRecord(
+        {
+          user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
+          choose_date: moment(this.pickerValue).format('YYYY-MM')
+        }).then((res) => {
+        this.withdrawRecordObject = res.data.data
+      }).catch(() => {
+      })
     },
     openPicker() {
       this.$refs.picker.open()

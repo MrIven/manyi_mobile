@@ -39,7 +39,7 @@
             <div class="platform-pic"></div>
           </div>
           <div class="popup-money">
-            ￥999.99
+            ￥{{this.allAmount}}
           </div>
           <div class="desc-2">
             即将提现到您的微信钱包
@@ -74,10 +74,7 @@ export default {
   mounted: function () {
     withdrawApi.canWithdrawalAmount({user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f'}).then((res) => {
       console.log(res)
-      let {data: {can_get_price: price}} = res
-      if (price) {
-        this.allAmount = price
-      }
+      this.allAmount = res.data.data.can_get_price
     }).catch(() => {
     })
   },

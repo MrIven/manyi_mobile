@@ -9,13 +9,13 @@
         </div>
       </div>
       <div class="header-picture">
-        <img src="../../assets/imgs/index/tempicon.jpg" class="picture-img">
+        <img :src=homeObject.head_image class="picture-img">
       </div>
       <div class="username">
-        张三
+       {{homeObject.username}}
       </div>
       <div class="user-mobile">
-        18987548569
+        {{homeObject.mobile}}
       </div>
       <div class="personal-setting" @click="personalSetting">
         个人设置
@@ -35,15 +35,15 @@
         <span class="cash-right-arrow"></span>
       </div>
       <div class="can-withdraw">
-        6666
+        {{homeObject.can_get_price}}
         <span>可提取</span>
       </div>
       <div class="in-settlement">
-        8888
+        {{homeObject.pay_price}}
         <span>结算中（元）</span>
       </div>
       <div class="total-income">
-        6666.8888
+        {{homeObject.sum_price}}
         <span>累计收入（元）</span>
       </div>
     </div>
@@ -62,15 +62,15 @@
         </div>
         <div class="number-invitees">
           <span>总人数</span>
-          <span class="team-span-style">100</span>
+          <span class="team-span-style">{{homeObject.team_sum_num}}</span>
         </div>
         <div class="number-comsumers">
           <span>直推客户</span>
-          <span class="team-span-style">88888</span>
+          <span class="team-span-style">{{homeObject.direct_num}}</span>
         </div>
         <div class="total-money">
           <span>间接客户</span>
-          <span class="team-span-style">18698</span>
+          <span class="team-span-style">{{homeObject.indirect_num}}</span>
         </div>
       </div>
       <div class="reward-box">
@@ -82,7 +82,7 @@
         <div class="reward-title">
           <div class="number-invitation-reward">
             <span>团队邀请人数</span>
-            <span class="reward-span-style">1000000</span>
+            <span class="reward-span-style">{{homeObject.invite_month_num}}</span>
           </div>
          <!-- <div class="number-comsumers-reward">
             <span>消费人数</span>
@@ -94,20 +94,20 @@
           </div>-->
           <div class="this-month-reward">
             <span>本月奖励</span>
-            <span class="reward-span-style">856254.88</span>
+            <span class="reward-span-style">{{homeObject.month_gift}}</span>
           </div>
-          <mt-datetime-picker
-            ref="picker"
-            type="date"
-            year-format="{value}"
-            month-format="{value}"
-            date-format='1'
-            @confirm="dateConfirm"
-            v-model="pickerValue">
-          </mt-datetime-picker>
         </div>
       </div>
     </div>
+    <mt-datetime-picker
+      ref="picker"
+      type="date"
+      year-format="{value}"
+      month-format="{value}"
+      date-format='1'
+      @confirm="dateConfirm"
+      v-model="pickerValue">
+    </mt-datetime-picker>
   </div>
 </template>
 
@@ -116,7 +116,7 @@ import {mapMutations, mapGetters, mapState} from 'vuex'
 import commonHeader from 'common/common-header'
 import moment from 'moment'
 import Vue from 'vue'
-import {DatetimePicker, Picker} from 'mint-ui'
+import {DatetimePicker} from 'mint-ui'
 import * as homeApi from 'api/home-api'
 
 Vue.component(DatetimePicker.name, DatetimePicker)
@@ -126,10 +126,23 @@ export default {
     return {
       pickerValue: new Date(),
       pickerShowValue: moment(new Date()).format('YYYY-MM'),
+      homeObject: {},
       num: 0
     }
   },
   created() {},
+  mounted: function () {
+    homeApi.getUserRefferInfo({
+      user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
+      choose_date: moment(this.pickerValue).format('YYYY-MM')
+    }).then((res) => {
+      console.log(res)
+      if (res.status === 200) {
+        this.homeObject = res.data.data
+      }
+    }).catch(() => {
+    })
+  },
   methods: {
     ...mapMutations({
       setNum: 'SET_NUM'
@@ -148,6 +161,16 @@ export default {
     },
     dateConfirm(item) {
       this.pickerShowValue = moment(item).format('YYYY-MM')
+      homeApi.getUserRefferInfo({
+        user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
+        choose_date: moment(this.pickerValue).format('YYYY-MM')
+      }).then((res) => {
+        console.log(res)
+        if (res.status === 200) {
+          this.homeObject = res.data.data
+        }
+      }).catch(() => {
+      })
     },
     toWithdrawCash() {
       this.$router.goRight('/withdraw')
@@ -522,7 +545,7 @@ export default {
       }
       .number-invitees{
         position: absolute;
-        .width(57);
+        .width(36);
         .h(20);
         .left(13);
         .top(43);
@@ -544,7 +567,7 @@ export default {
       }
       .total-money{
         position: absolute;
-        .width(117);
+        .width(57);
         .h(20);
         .left(196);
         .top(43);
@@ -654,6 +677,7 @@ export default {
         }
         .this-month-reward{
           position: absolute;
+          .w(57);
           .left(132);
         }
         .reward-span-style{

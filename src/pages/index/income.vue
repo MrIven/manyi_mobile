@@ -1,5 +1,14 @@
 <template>
   <div class="income-body">
+    <mt-datetime-picker
+      ref="picker"
+      type="date"
+      year-format="{value}年"
+      month-format="{value}月"
+      date-format='{value}日'
+      @confirm="dateConfirm"
+      v-model="pickerValue">
+    </mt-datetime-picker>
     <div class="body-header">
       <div class="header-top">
         <span class="left-icon"></span>
@@ -9,9 +18,9 @@
     </div>
     <div class="body-middle">
       <div class="middle-word-0">累计收入(元)</div>
-      <div class="middle-value-0">999999999.9</div>
-      <div class="middle-value-1">8899.00</div>
-      <div class="middle-value-2">6699.00</div>
+      <div class="middle-value-0">{{incomeObject.sum_price}}</div>
+      <div class="middle-value-1">{{incomeObject.can_get_price}}</div>
+      <div class="middle-value-2">{{incomeObject.pay_price}}</div>
       <div class="middle-word-1">可提现(元)</div>
       <div class="middle-word-2">结算中(元)</div>
       <div class="vertical-line"></div>
@@ -25,15 +34,6 @@
         <div class="all">全部</div>
         <div class="icon-down-2" @click="openPicker"></div>
         <div class="sort-desc">排序从高到低</div>
-        <mt-datetime-picker
-          ref="picker"
-          type="date"
-          year-format="{value}年"
-          month-format="{value}月"
-          date-format='{value}日'
-          @confirm="dateConfirm"
-          v-model="pickerValue">
-        </mt-datetime-picker>
       </div>
       <mt-loadmore
         :top-method="loadTop"
@@ -43,19 +43,19 @@
         <div  class="detail-infos">
           <div class="detail-info" v-for="(item, index) in list" :key="index">
             <span class="total-reward">
-              {{item.value1}}
+              {{item.profit}}
             </span>
-            <span class="reward-desc">{{item.value2}}</span>
+            <span class="reward-desc">累计奖励</span>
             <div class="head-portrait">
               <img src="../../assets/imgs/income/head-portrait.jpeg">
             </div>
-            <div class="custom-type">{{item.value3}}</div>
-            <div class="from">{{item.value4}}</div>
-            <div class="buy-card">{{item.value5}}</div>
-            <div class="card-money">{{item.value6}}</div>
-            <div class="buy-traffic">{{item.value7}}</div>
-            <div class="traffic-money">{{item.value8}}</div>
-            <div class="phone">{{item.value9}}</div>
+            <div class="custom-type">{{item.type}}</div>
+            <div class="from">{{item.name}}</div>
+            <div class="buy-card">买卡</div>
+            <div class="card-money">{{item.card_profit}}</div>
+            <div class="buy-traffic">买流量</div>
+            <div class="traffic-money">{{item.data_plan_profit}}</div>
+            <div class="phone">{{item.mobile}}</div>
           </div>
         </div>
       </mt-loadmore>
@@ -72,6 +72,7 @@
 import {DatetimePicker, Picker} from 'mint-ui'
 import moment from 'moment'
 import Vue from 'vue'
+import * as incomeApi from 'api/income-api'
 
 Vue.component(Picker.name, Picker)
 Vue.component(DatetimePicker.name, DatetimePicker)
@@ -82,55 +83,23 @@ export default {
       pickerValue: new Date(),
       pickerShowValue: moment(new Date()).format('YYYY年MM月'),
       allLoaded: false,
-      list: [
-        {
-          value1: '+132.00',
-          value2: '累计奖励',
-          value3: '直推客户',
-          value4: '来自: 李四',
-          value5: '买卡',
-          value6: '10.00',
-          value7: '买流量',
-          value8: '122.00',
-          value9: '180 5896 8584'
-
-        }, {
-          value1: '+132.00',
-          value2: '累计奖励',
-          value3: '直推客户',
-          value4: '来自: 李四',
-          value5: '买卡',
-          value6: '10.00',
-          value7: '买流量',
-          value8: '122.00',
-          value9: '180 5896 8584'
-
-        }, {
-          value1: '+132.00',
-          value2: '累计奖励',
-          value3: '直推客户',
-          value4: '来自: 李四',
-          value5: '买卡',
-          value6: '10.00',
-          value7: '买流量',
-          value8: '122.00',
-          value9: '180 5896 8584'
-
-        }, {
-          value1: '+132.00',
-          value2: '累计奖励',
-          value3: '直推客户',
-          value4: '来自: 李四',
-          value5: '买卡',
-          value6: '10.00',
-          value7: '买流量',
-          value8: '122.00',
-          value9: '180 5896 8584'
-
-        }
-      ],
+      incomeObject: {},
+      list: [],
       curPage: 1
     }
+  },
+  mounted: function () {
+    incomeApi.getUserRefferGift(
+      {
+        user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
+        choose_date: moment(this.pickerValue).format('YYYY-MM')
+      }).then((res) => {
+      if (res.status === 200) {
+        this.incomeObject = res.data.data
+        this.list = this.incomeObject.user_data
+      }
+    }).catch(() => {
+    })
   },
   methods: {
     scrollTop() {
@@ -138,6 +107,17 @@ export default {
     },
     dateConfirm(item) {
       this.pickerShowValue = moment(item).format('YYYY年MM月')
+      incomeApi.getUserRefferGift(
+        {
+          user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
+          choose_date: moment(this.pickerValue).format('YYYY-MM')
+        }).then((res) => {
+        if (res.status === 200) {
+          this.incomeObject = res.data.data
+          this.list = this.incomeObject.user_data
+        }
+      }).catch(() => {
+      })
     },
     openPicker() {
       this.$refs.picker.open()
@@ -160,12 +140,10 @@ export default {
     },
     getChildLocationList() {
       this.allLoaded = false
-      let dateCreated = this.dateCreated
-      this.$api.childLocationList({
+      incomeApi.getUserRefferGift({
         params: {
-          id: this.uid,
-          cid: this.curChildId,
-          dateCreated: dateCreated,
+          user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
+          choose_date: moment(this.pickerValue).format('YYYY-MM'),
           isPager: 1, // 0-不分页，1-分页；
           pageNum: this.curPage, // 第几页
           pageSize: this.pageSize // 每页显示数据条数
@@ -461,6 +439,7 @@ export default {
       }
       .total-reward{
         float: left;
+        .w(80);
         .pt(24);
         .pl(15);
         .h(28);

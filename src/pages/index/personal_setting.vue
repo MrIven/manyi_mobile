@@ -7,13 +7,13 @@
     <div class="alipay-setting">
       <div class="ali-icon"></div>
       <div class="account-desc">支付宝账号</div>
-      <div class="is-setting">已设置</div>
+      <div class="is-setting">{{alipay_is_bound?'已绑定':'未设置'}}</div>
       <div class="right-arrow"></div>
     </div>
     <div class="wechat-setting">
       <div class="wechat-icon"></div>
       <div class="account-desc">微信账号&nbsp;&nbsp;&nbsp;</div>
-      <div class="is-setting">未设置</div>
+      <div class="is-setting">{{weixin_is_bound ?'已绑定':'未设置'}}</div>
       <div class="right-arrow"></div>
     </div>
   </div>
@@ -21,11 +21,27 @@
 
 <script>
 import commonHeader from 'common/common-header'
+import * as settingApi from 'api/setting-api'
 export default {
   data() {
     return {
-      tittle: '个人设置'
+      tittle: '个人设置',
+      weixin_is_bound: true,
+      alipay_is_bound: true
     }
+  },
+  mounted: function() {
+    settingApi.fetchPersonalSetting(
+      {
+        user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f'
+      }
+    ).then((res) => {
+      if (res.status === 200) {
+        this.weixin_is_bound = res.data.data.weixin_is_bound
+        this.alipay_is_bound = res.data.data.alipay_is_bound
+      }
+    }).catch(() => {
+    })
   },
   methods: {
     back() {
