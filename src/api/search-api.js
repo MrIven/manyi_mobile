@@ -5,6 +5,6 @@
  */
 import {fetch, baseUrl} from 'config/index'
 
-export function getUserRefferInfo(params) {
-  return fetch(`${baseUrl}/share/userrefer_info`, params)
+export function fetchSearch(params) {
+  return fetch(`${baseUrl}/share/search`, params)
 }

@@ -3,8 +3,11 @@ module.exports = {
 		target: 'http://www.easiroam.cn/',
 		changeOrigin: true
 	},
-  '/': {
+  '/api': {
 		target: 'http://www.easiroam.cn/',
-		changeOrigin: true
+		changeOrigin: true,
+    pathRewrite: {
+		  '^/api': ''
+    }
 	}
 }

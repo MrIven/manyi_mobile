@@ -10,23 +10,23 @@
       </div>
       <div class="desc-5">
         <div class="desc-5-detail-1">提现申请已提交</div>
-        <div class="desc-5-detail-2">09-18  21:30</div>
+        <div class="desc-5-detail-2">{{transTimeFormat(withApplicationObj.create_time)}}</div>
         <div class="desc-5-detail-3">预计到账时间</div>
-        <div class="desc-5-detail-4">09-19  21:30</div>
+        <div class="desc-5-detail-4">{{transTimeFormat(withApplicationObj.end_time)}}</div>
         <div class="desc-5-detail-5">我们将尽快处理，请耐心等待</div>
       </div>
       <div class="split-box"></div>
       <div class="desc-4">
         <div class="desc-4-left">提现金额</div>
-        <div class="desc-4-right">¥ 999.99</div>
+        <div class="desc-4-right">¥ {{withApplicationObj.price/100}}</div>
       </div>
       <div class="desc-3">
         <div class="desc-3-left">收款方式</div>
-        <div class="desc-3-right">微信</div>
+        <div class="desc-3-right">{{withApplicationObj.type}}</div>
       </div>
       <div class="desc-2">
         <div class="desc-2-left">收款账号</div>
-        <div class="desc-2-right">3jdlajf2332ljfijfdal</div>
+        <div class="desc-2-right">{{withApplicationObj.account}}</div>
       </div>
       <div class="split-box1"></div>
       <div class="desc-1">到账查询</div>
@@ -41,6 +41,8 @@
 
 <script>
 import commonHeader from 'common/common-header'
+import * as withdrawRecordApi from 'api/withdraw-record-api'
+import moment from 'moment'
 import {Popup} from 'mint-ui'
 import Vue from 'vue'
 
@@ -49,11 +51,26 @@ export default {
   data() {
     return {
       tittle: '提现申请',
+      withApplicationObj: {},
       isActive: true,
-      popupVisible: false
+      popupVisible: false,
+      curPage: 1
     }
   },
+  mounted: function () {
+    withdrawRecordApi.withdrawalRecordDetail(
+      {
+        token: localStorage.getItem('token'),
+        id: this.$route.params.id
+      }).then((res) => {
+      this.withApplicationObj = res.data.data
+    }).catch(() => {
+    })
+  },
   methods: {
+    transTimeFormat(time) {
+      return moment(time).format('MM-DD HH:mm')
+    },
     selectPaymentType(flag) {
       this.isActive = flag
     },
@@ -214,22 +231,25 @@ export default {
       .desc-2{
         position: absolute;
         .w(375);
-        .h(26);
+        .h(33);
         .top(377);
         .fs(16);
-        line-height: 150%;
+        line-height: 100%;
         font-weight: bold;
         .desc-2-left{
+          position: relative;
           display: inline-block;
+          .pt(-10);
           .w(155);
-          .left(17);
           color: rgba(0, 0, 0, 1);
+          vertical-align: top;
           text-align: left;
         }
         .desc-2-right{
           display: inline-block;
           .w(155);
           .left(204);
+          word-wrap: break-word;word-break: break-all;overflow: hidden;
           color: rgba(128, 128, 128, 1);
           text-align: right;
         }

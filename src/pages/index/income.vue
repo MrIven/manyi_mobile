@@ -11,20 +11,20 @@
     </mt-datetime-picker>
     <div class="body-header">
       <div class="header-top">
-        <span class="left-icon"></span>
-        <span class="return-back">返回</span>
+        <!--<span class="left-icon"></span>
+        <span class="return-back">返回</span>-->
         <span class="income">收益</span>
       </div>
     </div>
     <div class="body-middle">
       <div class="middle-word-0">累计收入(元)</div>
-      <div class="middle-value-0">{{incomeObject.sum_price}}</div>
-      <div class="middle-value-1">{{incomeObject.can_get_price}}</div>
-      <div class="middle-value-2">{{incomeObject.pay_price}}</div>
+      <div class="middle-value-0">{{incomeObject?incomeObject.sum_price/100:0}}</div>
+      <div class="middle-value-1">{{incomeObject?incomeObject.can_get_price/100:0}}</div>
+      <div class="middle-value-2">{{incomeObject?incomeObject.pay_price/100:0}}</div>
       <div class="middle-word-1">可提现(元)</div>
       <div class="middle-word-2">结算中(元)</div>
       <div class="vertical-line"></div>
-      <button class="middle-word-3">我要提现</button>
+      <button class="middle-word-3" @click="toWithdraw">我要提现</button>
     </div>
     <div class="body-bottom">
       <div class="income-detail">
@@ -38,23 +38,29 @@
       <mt-loadmore
         :top-method="loadTop"
         :bottom-method="loadBottom"
+        topPullText="释放刷新"
+        bottomPullText="释放刷新"
+        topLoadingText="加载中"
+        bottomLoadingText="加载中"
+        bottomDistance="30"
+        topDistance="30"
         auto-fill='true'
         :bottom-all-loaded="allLoaded" ref="loadmore">
         <div  class="detail-infos">
           <div class="detail-info" v-for="(item, index) in list" :key="index">
             <span class="total-reward">
-              {{item.profit}}
+              {{item?item.profit/100:0}}
             </span>
             <span class="reward-desc">累计奖励</span>
             <div class="head-portrait">
-              <img src="../../assets/imgs/income/head-portrait.jpeg">
+              <img :src=item?item.head_image:1>
             </div>
             <div class="custom-type">{{item.type}}</div>
             <div class="from">{{item.name}}</div>
             <div class="buy-card">买卡</div>
-            <div class="card-money">{{item.card_profit}}</div>
+            <div class="card-money">{{item.card_profit/100}}</div>
             <div class="buy-traffic">买流量</div>
-            <div class="traffic-money">{{item.data_plan_profit}}</div>
+            <div class="traffic-money">{{item.data_plan_profit/100}}</div>
             <div class="phone">{{item.mobile}}</div>
           </div>
         </div>
@@ -91,8 +97,9 @@ export default {
   mounted: function () {
     incomeApi.getUserRefferGift(
       {
-        user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
-        choose_date: moment(this.pickerValue).format('YYYY-MM')
+        token: localStorage.getItem('token'),
+        choose_date: moment(this.pickerValue).format('YYYY-MM'),
+        page: this.curPage
       }).then((res) => {
       if (res.status === 200) {
         this.incomeObject = res.data.data
@@ -105,12 +112,16 @@ export default {
     scrollTop() {
       document.documentElement.scrollTop = document.body.scrollTop = 0
     },
+    toWithdraw() {
+      this.$router.goRight('/withdraw')
+    },
     dateConfirm(item) {
       this.pickerShowValue = moment(item).format('YYYY年MM月')
       incomeApi.getUserRefferGift(
         {
-          user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
-          choose_date: moment(this.pickerValue).format('YYYY-MM')
+          token: localStorage.getItem('token'),
+          choose_date: moment(this.pickerValue).format('YYYY-MM'),
+          page: 1
         }).then((res) => {
         if (res.status === 200) {
           this.incomeObject = res.data.data
@@ -142,19 +153,15 @@ export default {
       this.allLoaded = false
       incomeApi.getUserRefferGift({
         params: {
-          user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
+          token: localStorage.getItem('token'),
           choose_date: moment(this.pickerValue).format('YYYY-MM'),
-          isPager: 1, // 0-不分页，1-分页；
-          pageNum: this.curPage, // 第几页
-          pageSize: this.pageSize // 每页显示数据条数
+          page: this.curPage // 第几页
         }
       }).then(res => {
-        if (res.code === 2000) {
-          if (res.row) {
-            let _list = res.row.list
-            this.curPage = res.row.pageNum
-            this.pageSize = res.row.pageSize
-            let totalPages = res.row.pages // 总页数
+        if (res.status === 200) {
+          if (res.data.data) {
+            let _list = res.data.data.user_data
+            let totalPages = _list.pages // 总页数
             // 下拉刷新 加载更多
             setTimeout(() => {
               this.$refs.loadmore.onTopLoaded()
@@ -171,7 +178,6 @@ export default {
           } else {
             this.$refs.loadmore.onTopLoaded()
             this.allLoaded = true // 若数据已全部获取完毕
-            this.list = []
           }
         } else {
           this.$refs.loadmore.onTopLoaded()
@@ -234,7 +240,7 @@ export default {
       position: absolute;
       .w(52);
       .h(22);
-      .left(160);
+      .left(161.5);
       .top(32);
       letter-spacing: 0px;
       color: rgba(255, 255, 255, 1);
@@ -439,7 +445,6 @@ export default {
       }
       .total-reward{
         float: left;
-        .w(80);
         .pt(24);
         .pl(15);
         .h(28);

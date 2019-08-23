@@ -7,7 +7,7 @@
         <span class="record-desc">提现记录</span>
         <span class="withdraw-arrow-right" @click='withdrawRecord'>&nbsp;&nbsp;&nbsp;</span>
       </div>
-      <div class="money-style">￥{{allAmount}}</div>
+      <div class="money-style">￥{{withdrawObj?withdrawObj.can_get_price/100:0}}</div>
       <div class="split-box"></div>
       <div class="desc-1">选择收款方式</div>
       <div :class="[isActive?'ali-account1':'ali-account2']" @click="selectPaymentType(true)">
@@ -34,21 +34,33 @@
         popup-transition="popup-fade">
         <div class="popup-content">
           <div class="title-pic">
-            <div class="portrait"></div>
+            <div class="portrait" >
+              <img :src=withdrawObj?withdrawObj.head_image:1>
+            </div>
             <div class="white-backgroud"></div>
-            <div class="platform-pic"></div>
+            <div class="platform-pic">
+              <img src="../../assets/imgs/withdraw/wechat.png">
+            </div>
           </div>
           <div class="popup-money">
-            ￥{{this.allAmount}}
+            ￥{{withdrawObj?withdrawObj.can_get_price/100:0}}
           </div>
           <div class="desc-2">
             即将提现到您的微信钱包
           </div>
           <div class="account-info">
-            账户：3jdlajf2332ljfijfdal
+            账户：{{withdrawObj?withdrawObj.account:'暂无'}}
           </div>
           <button class="cancle" @click="cancle">取消</button>
           <button class="confirm" @click="confirm">确认</button>
+        </div>
+      </mt-popup>
+      <mt-popup
+        v-model="alertMsgVisible"
+        popup-transition="popup-fade"
+        position="top">
+        <div class="alertMessage">
+          <span >{{alertMessage}}</span>
         </div>
       </mt-popup>
     </div>
@@ -65,16 +77,21 @@ Vue.component(Popup.name, Popup)
 export default {
   data() {
     return {
+      withdrawObj: {},
       allAmount: 0,
+      alertMessage: '',
       tittle: '提现申请',
       isActive: true,
-      popupVisible: false
+      popupVisible: false,
+      alertMsgVisible: false
     }
   },
   mounted: function () {
-    withdrawApi.canWithdrawalAmount({user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f'}).then((res) => {
+    withdrawApi.canWithdrawalAmount({
+      token: localStorage.getItem('token')
+    }).then((res) => {
       console.log(res)
-      this.allAmount = res.data.data.can_get_price
+      this.withdrawObj = res.data.data
     }).catch(() => {
     })
   },
@@ -83,7 +100,21 @@ export default {
       this.$router.togo('/withdrawRecord')
     },
     confirm() {
-      this.$router.togo('/withdrawApplication')
+      let that = this
+      withdrawApi.withdrawMoney({
+        token: localStorage.getItem('token'),
+        money: that.withdrawObj ? that.withdrawObj.can_get_price / 100 : 0
+      }).then((res) => {
+        if (res.data.data !== null) {
+          if (res.data.data.id !== null) {
+            that.$router.togo('/withdrawApplication/' + res.data.data.id)
+          } else {
+            alert('转账失败')
+          }
+        } else {
+          alert('转账异常')
+        }
+      })
     },
     cancle() {
       this.popupVisible = false
@@ -92,8 +123,11 @@ export default {
       this.isActive = flag
     },
     toWithdrawMoney(flag) {
-      this.popupVisible = true
       if (flag) {
+        this.alertMsgVisible = true
+        this.alertMessage = '暂不支持支付宝'
+      } else {
+        this.popupVisible = true
       }
     },
     back() {
@@ -109,6 +143,11 @@ export default {
 <style scoped lang="less">
   @import "~styles/index.less";
   @import "~styles/variable.less";
+  .alertMessage{
+    .w(375);
+    .h(59);
+    background-color: orange;
+  }
   .withdraw-box{
     .box-content{
       position: absolute;
@@ -325,19 +364,26 @@ export default {
         .mt(20);
         .top(348);
         .b-radius(13);
-        background-image: url("../../assets/imgs/income/head-portrait.jpeg");
         background-size: cover;
+        img{
+          .w(74);
+          .h(74);
+          z-index: 1;
+          .top(348);
+          .b-radius(13);
+        }
       }
       .platform-pic{
-        .w(24);
-        .h(24);
-        z-index: 2;
-        background: rgba(112,198,125,1);
-        .b-radius(20);
-        .ml(206);
-        .mt(-28);
-        background-image: url("../../assets/imgs/withdraw/wechat.png");
-        background-size: cover;
+       img{
+         position: absolute;
+         .w(24);
+         .h(24);
+         z-index: 3;
+         background: rgba(112,198,125,1);
+         .b-radius(20);
+         .top(78);
+         .left(202)
+       }
       }
     }
     .popup-money{

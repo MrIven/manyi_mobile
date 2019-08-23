@@ -80,7 +80,7 @@ export default new Router({
       component: (resolve) => require(['@/pages/index/withdraw_record'], resolve)
     },
     {
-      path: '/withdrawApplication',
+      path: '/withdrawApplication/:id',
       name: 'withdrawApplication',
       component: (resolve) => require(['@/pages/index/withdraw_application'], resolve)
     }

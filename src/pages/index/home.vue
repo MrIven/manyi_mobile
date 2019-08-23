@@ -3,8 +3,8 @@
     <div class="header">
       <div class="header-top">
         <div class="left-icon">
-          <span class="icon-back"></span>
-          <span class="back-content">返回</span>
+          <!--<span class="icon-back"></span>-->
+          <!--<span class="back-content">返回</span>-->
           <span class="title-content">邀请好友拿现金</span>
         </div>
       </div>
@@ -35,15 +35,15 @@
         <span class="cash-right-arrow"></span>
       </div>
       <div class="can-withdraw">
-        {{homeObject.can_get_price}}
+        {{homeObject.can_get_price/100}}
         <span>可提取</span>
       </div>
       <div class="in-settlement">
-        {{homeObject.pay_price}}
+        {{homeObject.pay_price/100}}
         <span>结算中（元）</span>
       </div>
       <div class="total-income">
-        {{homeObject.sum_price}}
+        {{homeObject.sum_price/100}}
         <span>累计收入（元）</span>
       </div>
     </div>
@@ -94,7 +94,7 @@
           </div>-->
           <div class="this-month-reward">
             <span>本月奖励</span>
-            <span class="reward-span-style">{{homeObject.month_gift}}</span>
+            <span class="reward-span-style">{{homeObject.month_gift/100}}</span>
           </div>
         </div>
       </div>
@@ -114,7 +114,9 @@
 <script>
 import {mapMutations, mapGetters, mapState} from 'vuex'
 import commonHeader from 'common/common-header'
+import {baseUrl} from 'config/index'
 import moment from 'moment'
+import axios from 'axios'
 import Vue from 'vue'
 import {DatetimePicker} from 'mint-ui'
 import * as homeApi from 'api/home-api'
@@ -131,9 +133,15 @@ export default {
     }
   },
   created() {},
+  beforeMount: function () {
+    let token = this.$route.query.token
+    if (token) {
+      localStorage.setItem('token', token)
+    }
+  },
   mounted: function () {
     homeApi.getUserRefferInfo({
-      user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
+      token: localStorage.getItem('token'),
       choose_date: moment(this.pickerValue).format('YYYY-MM')
     }).then((res) => {
       console.log(res)
@@ -141,6 +149,8 @@ export default {
         this.homeObject = res.data.data
       }
     }).catch(() => {
+    }).then(() => {
+
     })
   },
   methods: {
@@ -162,7 +172,7 @@ export default {
     dateConfirm(item) {
       this.pickerShowValue = moment(item).format('YYYY-MM')
       homeApi.getUserRefferInfo({
-        user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
+        token: localStorage.getItem('token'),
         choose_date: moment(this.pickerValue).format('YYYY-MM')
       }).then((res) => {
         console.log(res)
@@ -174,23 +184,6 @@ export default {
     },
     toWithdrawCash() {
       this.$router.goRight('/withdraw')
-    },
-    login() {
-      let params = {
-        password: 'gs123456',
-        storeNo: '',
-        userName: '17326015487'
-      }
-      homeApi.loginUserNo(params).then((res) => {
-        console.log(res)
-        let {data, status} = res
-        console.log(data)
-        if (status === 200) {
-          alert(data)
-        } else {
-        }
-      }).catch(() => {
-      })
     }
   },
   components: {
@@ -262,7 +255,7 @@ export default {
           display: inline-block;
           .w(150);
           .h(56);
-          .left(120);
+          .left(112);
           .top(2);
           letter-spacing: 0px;
           color: rgba(255, 255, 255, 1);
@@ -545,7 +538,7 @@ export default {
       }
       .number-invitees{
         position: absolute;
-        .width(36);
+        .width(40);
         .h(20);
         .left(13);
         .top(43);
@@ -569,7 +562,7 @@ export default {
         position: absolute;
         .width(57);
         .h(20);
-        .left(196);
+        .left(201);
         .top(43);
         .fs(12);
         color: rgba(166, 166, 166, 1);
@@ -655,7 +648,7 @@ export default {
       }
       .reward-title{
         position: absolute;
-        .width(87);
+        .width(92);
         .top(43);
         .h(20);
         .fs(12);

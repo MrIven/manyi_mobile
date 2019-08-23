@@ -10,6 +10,7 @@ import Mint from 'mint-ui'
 import 'mint-ui/lib/style.css'
 import FastClick from 'fastclick'
 import '../static/js/flexible.js'
+import global_ from './components/Global'//引用文件
 if (process.env.MOCK) {    // 判断是否为mock模式
   require('./mock/index.js')
 }
@@ -52,7 +53,7 @@ window.addEventListener('popstate', function(e) {
 //     window.plus.navigator.setStatusBarBackground('#d81e06')
 //   }
 // })
-
+Vue.prototype.GLOBAL = global_//挂载到Vue实例上面
 Vue.use(Mint)
 Vue.use(Vuex)
 Vue.config.productionTip = false

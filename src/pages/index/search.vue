@@ -18,7 +18,7 @@
             </span>
           <span class="reward-desc">累计邀请人数</span>
           <div class="head-portrait">
-            <img src="../../assets/imgs/income/head-portrait.jpeg">
+            <img :src=item.head_image>
           </div>
           <div class="custom-type">{{item.type}}</div>
           <div class="from">{{item.username}}</div>
@@ -36,7 +36,7 @@
 
 <script>
 import {mapMutations, mapGetters, mapState} from 'vuex'
-import * as teamApi from 'api/team-api'
+import * as searchApi from 'api/search-api'
 import commonHeader from 'common/common-header'
 export default {
   data () {
@@ -45,6 +45,7 @@ export default {
       searchObject: {},
       searchValue: '',
       allLoaded: false,
+      curPage: 1,
       num: 0,
       list: []
     }
@@ -66,19 +67,15 @@ export default {
     },
     getChildLocationList() {
       this.allLoaded = false
-      teamApi.getUserRefferTeam(
+      searchApi.fetchSearch(
         {
-          user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
+          token: localStorage.getItem('token'),
           search: this.searchValue,
-          isPager: 1, // 0-不分页，1-分页；
-          pageNum: this.curPage, // 第几页
-          pageSize: this.pageSize // 每页显示数据条数
+          page: this.curPage // 第几页
         }).then(res => {
         if (res.status === 200) {
-          if (res.data.data.user_data) {
+          if (res.data.data) {
             let _list = res.data.data.user_data
-            this.curPage = _list.pageNum
-            this.pageSize = _list.pageSize
             let totalPages = _list.pages // 总页数
             // 下拉刷新 加载更多
             setTimeout(() => {
@@ -108,10 +105,11 @@ export default {
     },
     search_click() {
       if (this.searchValue) {
-        teamApi.getUserRefferTeam(
+        searchApi.fetchSearch(
           {
-            user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
-            search: this.searchValue
+            token: localStorage.getItem('token'),
+            search: this.searchValue,
+            page: 1
           }).then((res) => {
           if (res.status === 200) {
             this.searchObject = res.data.data

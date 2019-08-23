@@ -33,7 +33,7 @@ export default {
   mounted: function() {
     settingApi.fetchPersonalSetting(
       {
-        user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f'
+        token: localStorage.getItem('token')
       }
     ).then((res) => {
       if (res.status === 200) {

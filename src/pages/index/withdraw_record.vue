@@ -25,18 +25,18 @@
         auto-fill='true'
         :bottom-all-loaded="allLoaded" ref="loadmore">
         <div  class="detail-infos">
-          <div class="detail-info" v-for="(item, index) in withdrawRecordObject.user_data" :key="index">
+          <div class="detail-info" v-for="(item, index) in list" :key="index" @click="toWithdrawDetail(item.id)">
             <div class="head-portrait" >
               <img class="portrait-img" src="../../assets/imgs/income/head-portrait.jpeg"/>
             </div>
             <div class="desc-0">
               <span class="total-reward">
-              {{item.price}}
-            </span>
-              <div class="from">{{item.time}}</div>
+                +{{item.price/100}}
+              </span>
+              <div class="from">{{transTimeFormat(item.time)}}</div>
             </div>
             <div class="desc-1">
-              <div class="join-time-desc">提现到{{item.type_desc}}</div>
+              <div class="join-time-desc">{{item.type_desc}}</div>
               <div class="join-time">账号：{{item.account}}</div>
             </div>
           </div>
@@ -65,35 +65,9 @@ export default {
     return {
       pickerValue: new Date(),
       tittle: '提现记录',
-      withdrawRecordObject: {},
       pickerShowValue: moment(new Date()).format('YYYY年MM月'),
       allLoaded: false,
-      list: [
-        {
-          value1: '+1323333.00',
-          value4: '07-14 14:26',
-          value5: '提现到支付宝',
-          value6: '账号：3jdlajf2332ljfijfdal'
-        },
-        {
-          value1: '+132.00',
-          value4: '07-14 14:26',
-          value5: '提现到支付宝',
-          value6: '账号：3jdlajf2332ljfijfdal'
-        },
-        {
-          value1: '+132.00',
-          value4: '07-14 14:26',
-          value5: '提现到支付宝',
-          value6: '账号：3jdlajf2332ljfijfdal'
-        },
-        {
-          value1: '+132.00',
-          value4: '07-14 14:26',
-          value5: '提现到支付宝',
-          value6: '账号：3jdlajf2332ljfijfdal'
-        }
-      ],
+      list: [],
       curPage: 1
     }
   },
@@ -103,14 +77,23 @@ export default {
   mounted: function () {
     withdrawRecordApi.fetchWithdrawalRecord(
       {
-        user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
-        choose_date: moment(this.pickerValue).format('YYYY-MM')
+        token: localStorage.getItem('token'),
+        choose_date: moment(this.pickerValue).format('YYYY-MM'),
+        page: this.curPage
       }).then((res) => {
-      this.withdrawRecordObject = res.data.data
+      console.log(res)
+      this.list = res.data.data
+      console.log(this.list)
     }).catch(() => {
     })
   },
   methods: {
+    toWithdrawDetail(id) {
+      this.$router.goRight('/withdrawApplication/' + id)
+    },
+    transTimeFormat(time) {
+      return moment(time).format('MM-DD HH:mm')
+    },
     scrollTop() {
       document.documentElement.scrollTop = document.body.scrollTop = 0
     },
@@ -118,10 +101,11 @@ export default {
       this.pickerShowValue = moment(item).format('YYYY年MM月')
       withdrawRecordApi.fetchWithdrawalRecord(
         {
-          user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
-          choose_date: moment(this.pickerValue).format('YYYY-MM')
+          token: localStorage.getItem('token'),
+          choose_date: moment(this.pickerValue).format('YYYY-MM'),
+          page: 1
         }).then((res) => {
-        this.withdrawRecordObject = res.data.data
+        this.list = res.data.data
       }).catch(() => {
       })
     },
@@ -146,23 +130,17 @@ export default {
     },
     getChildLocationList() {
       this.allLoaded = false
-      let dateCreated = this.dateCreated
-      this.$api.childLocationList({
+      withdrawRecordApi.fetchWithdrawalRecord({
         params: {
-          id: this.uid,
-          cid: this.curChildId,
-          dateCreated: dateCreated,
-          isPager: 1, // 0-不分页，1-分页；
-          pageNum: this.curPage, // 第几页
-          pageSize: this.pageSize // 每页显示数据条数
+          token: localStorage.getItem('token'),
+          choose_date: moment(this.pickerValue).format('YYYY-MM'),
+          page: this.curPage
         }
       }).then(res => {
-        if (res.code === 2000) {
-          if (res.row) {
-            let _list = res.row.list
-            this.curPage = res.row.pageNum
-            this.pageSize = res.row.pageSize
-            let totalPages = res.row.pages // 总页数
+        if (res.status === 200) {
+          if (res.data.data) {
+            let _list = res.data.data.user_data
+            let totalPages = _list.pages // 总页数
             // 下拉刷新 加载更多
             setTimeout(() => {
               this.$refs.loadmore.onTopLoaded()

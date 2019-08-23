@@ -11,8 +11,8 @@
     </mt-datetime-picker>
     <div class="body-header">
       <div class="header-top">
-        <span class="left-icon"></span>
-        <span class="return-back">返回</span>
+        <!--<span class="left-icon"></span>
+        <span class="return-back">返回</span>-->
         <span class="income">团队</span>
       </div>
     </div>
@@ -56,7 +56,7 @@
             </span>
             <span class="reward-desc">累计邀请人数</span>
             <div class="head-portrait">
-              <img src="../../assets/imgs/income/head-portrait.jpeg">
+              <img :src=item.head_image>
             </div>
             <div class="custom-type">{{item.type}}</div>
             <div class="from">{{item.username}}</div>
@@ -96,8 +96,9 @@ export default {
   mounted: function () {
     teamApi.getUserRefferTeam(
       {
-        user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
-        choose_date: moment(this.pickerValue).format('YYYY-MM')
+        token: localStorage.getItem('token'),
+        choose_date: moment(this.pickerValue).format('YYYY-MM'),
+        page: this.curPage // 第几页
       }).then((res) => {
       this.teamObject = res.data.data
       this.list = this.teamObject.user_data
@@ -137,32 +138,32 @@ export default {
       this.allLoaded = false
       teamApi.getUserRefferTeam(
         {
-          user_id: 'e79f4fa29f9c4a77a29a1feb7092f28f',
-          choose_date: moment(this.pickerValue).format('YYYY-MM')
+          token: localStorage.getItem('token'),
+          choose_date: moment(this.pickerValue).format('YYYY-MM'),
+          page: this.curPage // 第几页
         }).then(res => {
-        console.log(res)
-        if (res.data.data.user_data) {
-          let _list = res.data.data.user_data
-          this.curPage = _list.pageNum
-          this.pageSize = _list.pageSize
-          let totalPages = _list.pages // 总页数
-          // 下拉刷新 加载更多
-          setTimeout(() => {
-            this.$refs.loadmore.onTopLoaded()
-            this.$refs.loadmore.onBottomLoaded()
-          }, 1000)
-          if (this.curPage === 1) {
-            this.list = _list
-          } else {
-            if (this.curPage === totalPages) {
-              this.allLoaded = true // 若数据已全部获取完毕
+        if (res.status === 200) {
+          if (res.data.data) {
+            let _list = res.data.data.user_data
+            let totalPages = _list.pages // 总页数
+            // 下拉刷新 加载更多
+            setTimeout(() => {
+              this.$refs.loadmore.onTopLoaded()
+              this.$refs.loadmore.onBottomLoaded()
+            }, 1000)
+            if (this.curPage === 1) {
+              this.list = _list
+            } else {
+              if (this.curPage === totalPages) {
+                this.allLoaded = true // 若数据已全部获取完毕
+              }
+              this.list = this.list.concat(_list) // 数组追加
             }
-            this.list = this.list.concat(_list) // 数组追加
+          } else {
+            this.$refs.loadmore.onTopLoaded()
           }
         } else {
           this.$refs.loadmore.onTopLoaded()
-          this.allLoaded = true // 若数据已全部获取完毕
-          this.list = []
         }
       })
     }
@@ -221,7 +222,7 @@ export default {
         position: absolute;
         .w(52);
         .h(22);
-        .left(160);
+        .left(161.5);
         .top(32);
         letter-spacing: 0px;
         color: rgba(255, 255, 255, 1);
