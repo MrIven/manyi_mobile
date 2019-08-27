@@ -49,7 +49,7 @@
             即将提现到您的微信钱包
           </div>
           <div class="account-info">
-            账户：{{withdrawObj?withdrawObj.account:'暂无'}}
+            账户：{{withdrawObj?withdrawObj.weixin_account:'暂无'}}
           </div>
           <button class="cancle" @click="cancle">取消</button>
           <button class="confirm" @click="confirm">确认</button>
@@ -58,10 +58,9 @@
       <mt-popup
         v-model="alertMsgVisible"
         popup-transition="popup-fade"
+        class="alertMessage"
         position="top">
-        <div class="alertMessage">
-          <span >{{alertMessage}}</span>
-        </div>
+        {{alertMessage}}
       </mt-popup>
     </div>
   </div>
@@ -90,7 +89,6 @@ export default {
     withdrawApi.canWithdrawalAmount({
       token: localStorage.getItem('token')
     }).then((res) => {
-      console.log(res)
       this.withdrawObj = res.data.data
     }).catch(() => {
     })
@@ -144,9 +142,11 @@ export default {
   @import "~styles/index.less";
   @import "~styles/variable.less";
   .alertMessage{
-    .w(375);
+    width: 100%;
     .h(59);
-    background-color: orange;
+    line-height: 350%;
+    .fs(16);
+    background-color:  rgba(255, 255, 255, 1);
   }
   .withdraw-box{
     .box-content{

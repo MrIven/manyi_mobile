@@ -9,25 +9,18 @@
         <div class="all">全部</div>
         <div class="icon-down-2" @click="openPicker"></div>
         <div class="sort-desc">排序从高到低</div>
-        <mt-datetime-picker
-          ref="picker"
-          type="date"
-          year-format="{value}年"
-          month-format="{value}月"
-          date-format='{value}日'
-          @confirm="dateConfirm"
-          v-model="pickerValue">
-        </mt-datetime-picker>
       </div>
       <mt-loadmore
         :top-method="loadTop"
-        :bottom-method="loadBottom"
-        auto-fill='true'
+        auto-fill='false'
         :bottom-all-loaded="allLoaded" ref="loadmore">
         <div  class="detail-infos">
-          <div class="detail-info" v-for="(item, index) in list" :key="index" @click="toWithdrawDetail(item.id)">
-            <div class="head-portrait" >
-              <img class="portrait-img" src="../../assets/imgs/income/head-portrait.jpeg"/>
+          <div class="detail-info" v-for="(item, index) in list" :key="index">
+            <div class="head-portrait" v-if='item.type_desc===0'>
+              <img class="portrait-img" src="../../assets/imgs/personal_setting/wechat.svg"/>
+            </div>
+            <div class="head-portrait" v-else>
+              <img class="portrait-img" src="../../assets/imgs/personal_setting/alipay.svg"/>
             </div>
             <div class="desc-0">
               <span class="total-reward">
@@ -36,12 +29,21 @@
               <div class="from">{{transTimeFormat(item.time)}}</div>
             </div>
             <div class="desc-1">
-              <div class="join-time-desc">{{item.type_desc}}</div>
+              <div class="join-time-desc">{{item.type_desc===0?'微信提现':'支付宝提现'}}</div>
               <div class="join-time">账号：{{item.account}}</div>
             </div>
           </div>
         </div>
       </mt-loadmore>
+      <mt-datetime-picker
+        ref="picker"
+        type="date"
+        year-format="{value}年"
+        month-format="{value}月"
+        date-format='{value}日'
+        @confirm="dateConfirm"
+        v-model="pickerValue">
+      </mt-datetime-picker>
       <div class="scrollTop" @click="scrollTop">
         <div class="icon-arrow-up">
         </div>
@@ -65,10 +67,11 @@ export default {
     return {
       pickerValue: new Date(),
       tittle: '提现记录',
+      scrollMode: 'auto',
       pickerShowValue: moment(new Date()).format('YYYY年MM月'),
       allLoaded: false,
       list: [],
-      curPage: 1
+      curPage: 0
     }
   },
   components: {
@@ -88,9 +91,9 @@ export default {
     })
   },
   methods: {
-    toWithdrawDetail(id) {
+    /*toWithdrawDetail(id) {
       this.$router.goRight('/withdrawApplication/' + id)
-    },
+    },*/
     transTimeFormat(time) {
       return moment(time).format('MM-DD HH:mm')
     },
@@ -99,13 +102,14 @@ export default {
     },
     dateConfirm(item) {
       this.pickerShowValue = moment(item).format('YYYY年MM月')
+      let that = this
       withdrawRecordApi.fetchWithdrawalRecord(
         {
           token: localStorage.getItem('token'),
           choose_date: moment(this.pickerValue).format('YYYY-MM'),
           page: 1
         }).then((res) => {
-        this.list = res.data.data
+        that.list = res.data.data
       }).catch(() => {
       })
     },
@@ -120,47 +124,41 @@ export default {
     },
     // 下拉刷新
     loadTop() {
-      this.curPage = 1
-      this.getChildLocationList()
-    },
-    // 加载更多数据
-    loadBottom() {
       this.curPage += 1
-      this.getChildLocationList()
+      this.getChildLocationList('top')
     },
-    getChildLocationList() {
+    getChildLocationList(type) {
       this.allLoaded = false
+      let that = this
       withdrawRecordApi.fetchWithdrawalRecord({
-        params: {
-          token: localStorage.getItem('token'),
-          choose_date: moment(this.pickerValue).format('YYYY-MM'),
-          page: this.curPage
-        }
+        token: localStorage.getItem('token'),
+        choose_date: moment(this.pickerValue).format('YYYY-MM'),
+        page: that.curPage
       }).then(res => {
         if (res.status === 200) {
           if (res.data.data) {
-            let _list = res.data.data.user_data
-            let totalPages = _list.pages // 总页数
-            // 下拉刷新 加载更多
-            setTimeout(() => {
-              this.$refs.loadmore.onTopLoaded()
-              this.$refs.loadmore.onBottomLoaded()
-            }, 1000)
-            if (this.curPage === 1) {
-              this.list = _list
-            } else {
-              if (this.curPage === totalPages) {
-                this.allLoaded = true // 若数据已全部获取完毕
+            if (type === 'top') {
+              let _list = res.data.data
+              if (_list.length > 0) {
+                that.list = that.list.concat(_list)
+              } else {
+                alert('数据已全部加载完毕')
               }
-              this.list = this.list.concat(_list) // 数组追加
+              this.$refs.loadmore.onTopLoaded()
+            } else {
+              let _list = res.data.data
+              that.list = that.list.concat(_list)
             }
           } else {
-            this.$refs.loadmore.onTopLoaded()
-            this.allLoaded = true // 若数据已全部获取完毕
-            this.list = []
+            if (type === 'top') {
+              alert('暂无数据')
+            } else {
+              that.allLoaded = true // 若数据已全部获取完毕
+              alert('数据以加载完毕')
+            }
           }
         } else {
-          this.$refs.loadmore.onTopLoaded()
+          alert('请求失败')
         }
       })
     }

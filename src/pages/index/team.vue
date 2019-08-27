@@ -46,7 +46,6 @@
       </div>
       <mt-loadmore
         :top-method="loadTop"
-        :bottom-method="loadBottom"
         auto-fill='true'
         :bottom-all-loaded="allLoaded" ref="loadmore">
         <div  class="detail-infos">
@@ -126,16 +125,17 @@ export default {
     },
     // 下拉刷新
     loadTop() {
-      this.curPage = 1
-      this.getChildLocationList()
+      this.curPage += 1
+      this.getChildLocationList('top')
     },
     // 加载更多数据
     loadBottom() {
       this.curPage += 1
-      this.getChildLocationList()
+      this.getChildLocationList('bottom')
     },
-    getChildLocationList() {
+    getChildLocationList(type) {
       this.allLoaded = false
+      let that = this
       teamApi.getUserRefferTeam(
         {
           token: localStorage.getItem('token'),
@@ -144,26 +144,28 @@ export default {
         }).then(res => {
         if (res.status === 200) {
           if (res.data.data) {
-            let _list = res.data.data.user_data
-            let totalPages = _list.pages // 总页数
-            // 下拉刷新 加载更多
-            setTimeout(() => {
-              this.$refs.loadmore.onTopLoaded()
-              this.$refs.loadmore.onBottomLoaded()
-            }, 1000)
-            if (this.curPage === 1) {
-              this.list = _list
-            } else {
-              if (this.curPage === totalPages) {
-                this.allLoaded = true // 若数据已全部获取完毕
+            if (type === 'top') {
+              let _list = res.data.data
+              if (_list.length > 0) {
+                that.list = that.list.concat(_list)
+              } else {
+                alert('数据已全部加载完毕')
               }
-              this.list = this.list.concat(_list) // 数组追加
+              this.$refs.loadmore.onTopLoaded()
+            } else {
+              let _list = res.data.data
+              that.list = that.list.concat(_list)
             }
           } else {
-            this.$refs.loadmore.onTopLoaded()
+            if (type === 'top') {
+              alert('暂无数据')
+            } else {
+              that.allLoaded = true // 若数据已全部获取完毕
+              alert('数据以加载完毕')
+            }
           }
         } else {
-          this.$refs.loadmore.onTopLoaded()
+          alert('请求失败')
         }
       })
     }

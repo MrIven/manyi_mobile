@@ -10,6 +10,9 @@ import Mint from 'mint-ui'
 import 'mint-ui/lib/style.css'
 import FastClick from 'fastclick'
 import '../static/js/flexible.js'
+import axios from "axios"
+Vue.prototype.$axios = axios
+axios.defaults.timeout = 10000
 import global_ from './components/Global'//引用文件
 if (process.env.MOCK) {    // 判断是否为mock模式
   require('./mock/index.js')
