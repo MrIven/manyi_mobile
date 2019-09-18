@@ -46,7 +46,7 @@
       </div>
       <mt-loadmore
         :top-method="loadTop"
-        auto-fill='true'
+        auto-fill='false'
         :bottom-all-loaded="allLoaded" ref="loadmore">
         <div  class="detail-infos">
           <div class="detail-info" v-for="(item, index) in list" :key="index">
@@ -128,11 +128,6 @@ export default {
       this.curPage += 1
       this.getChildLocationList('top')
     },
-    // 加载更多数据
-    loadBottom() {
-      this.curPage += 1
-      this.getChildLocationList('bottom')
-    },
     getChildLocationList(type) {
       this.allLoaded = false
       let that = this
@@ -145,7 +140,7 @@ export default {
         if (res.status === 200) {
           if (res.data.data) {
             if (type === 'top') {
-              let _list = res.data.data
+              let _list = res.data.data.user_data
               if (_list.length > 0) {
                 that.list = that.list.concat(_list)
               } else {
@@ -153,7 +148,7 @@ export default {
               }
               this.$refs.loadmore.onTopLoaded()
             } else {
-              let _list = res.data.data
+              let _list = res.data.data.user_data
               that.list = that.list.concat(_list)
             }
           } else {

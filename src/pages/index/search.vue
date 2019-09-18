@@ -59,11 +59,6 @@ export default {
       this.curPage += 1
       this.getChildLocationList('top')
     },
-    // 加载更多数据
-    loadBottom() {
-      this.curPage += 1
-      this.getChildLocationList('bottom')
-    },
     getChildLocationList(type) {
       this.allLoaded = false
       let that = this

@@ -129,12 +129,14 @@ export default {
       pickerValue: new Date(),
       pickerShowValue: moment(new Date()).format('YYYY-MM'),
       homeObject: {},
+      localtion: '',
       num: 0
     }
   },
   created() {},
   beforeMount: function () {
-    let token = this.$route.query.token
+    let token = this.getQueryVariable('token')
+    this.localtion = token
     if (token) {
       localStorage.setItem('token', token)
     }
@@ -159,6 +161,17 @@ export default {
     }),
     personalSetting() {
       this.$router.togo('/personal_setting')
+    },
+    getQueryVariable(variable) {
+      var query = window.location.search.substring(1)
+      var vars = query.split('&')
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=')
+        if (pair[0] === variable) {
+          return pair[1]
+        }
+      }
+      return (false)
     },
     openPicker() {
       this.$refs.picker.open()
@@ -582,7 +595,7 @@ export default {
       .width(374);
       .h(99);
       .left(1);
-      .top(277);
+      .top(272);
       .fs(14);
       color: rgba(80, 80, 80, 1);
       background-color: rgba(255, 255, 255, 1);

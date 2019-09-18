@@ -8,7 +8,7 @@
         <div class="icon-down-1" @click="openPicker"></div>
         <div class="all">全部</div>
         <div class="icon-down-2" @click="openPicker"></div>
-        <div class="sort-desc">排序从高到低</div>
+        <div class="sort-desc">根据时间排序</div>
       </div>
       <mt-loadmore
         :top-method="loadTop"
