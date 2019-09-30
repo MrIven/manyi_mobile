@@ -29,16 +29,20 @@
       <div class="income-detail">
         <div class="detail-word">成员列表</div>
         <div class="year-month">
-          <select>
-          <option value="1">按推广人数1</option>
-          <option value="2">按推广人数2</option>
-          <option value="3">按推广人数3</option>
-          <option value="4">按推广人数4</option>
-        </select>
+          <select v-model="sortValue" @change="queryBySort">
+            <option value="1">推广人数</option>
+            <option value="1">从高到低</option>
+            <option value="0">从低到高</option>
+          </select>
         </div>
-        <div class="icon-down-1" @click="openPicker"></div>
-        <div class="all">全部</div>
-        <div class="icon-down-2" @click="openPicker"></div>
+        <div class="icon-down-1" ></div>
+        <div class="all">
+          <select v-model="customType" @change="queryBySort">
+            <option value="all">全部客户</option>
+            <option value="direct">直接客户</option>
+            <option value="indirect">间接客户</option>
+          </select>
+        </div>
         <div class="sort-desc" @click="search">
           <div class="search-icon"></div>
           <div>搜索</div>
@@ -84,7 +88,9 @@ Vue.component(DatetimePicker.name, DatetimePicker)
 export default {
   data () {
     return {
+      customType: 'all',
       pickerValue: new Date(),
+      sortValue: 1,
       teamObject: {},
       pickerShowValue: moment(new Date()).format('YYYY年MM月'),
       allLoaded: false,
@@ -105,6 +111,26 @@ export default {
     })
   },
   methods: {
+    queryBySort() {
+      teamApi.getUserRefferTeam(
+        {
+          token: localStorage.getItem('token'),
+          choose_date: moment(this.pickerValue).format('YYYY-MM'),
+          type: this.sortValue,
+          page: this.curPage // 第几页
+        }).then((res) => {
+        this.teamObject = res.data.data
+        this.list = this.teamObject.user_data
+        if (this.customType === 'all') {
+          this.list = res.teamObject.user_data
+        } else if (this.customType === 'direct') {
+          this.list = res.teamObject.direct_user_data
+        } else {
+          this.list = res.teamObject.indirect_user_data
+        }
+      }).catch(() => {
+      })
+    },
     search() {
       this.$router.goRight('/search')
     },
@@ -134,13 +160,21 @@ export default {
       teamApi.getUserRefferTeam(
         {
           token: localStorage.getItem('token'),
+          type: this.sortValue,
           choose_date: moment(this.pickerValue).format('YYYY-MM'),
           page: this.curPage // 第几页
         }).then(res => {
         if (res.status === 200) {
           if (res.data.data) {
             if (type === 'top') {
-              let _list = res.data.data.user_data
+              let _list = []
+              if (that.customType === 'all') {
+                _list = res.data.data.user_data
+              } else if (that.customType === 'direct') {
+                _list = res.data.data.direct_user_data
+              } else {
+                _list = res.data.data.indirect_user_data
+              }
               if (_list.length > 0) {
                 that.list = that.list.concat(_list)
               } else {
@@ -148,7 +182,14 @@ export default {
               }
               this.$refs.loadmore.onTopLoaded()
             } else {
-              let _list = res.data.data.user_data
+              let _list = []
+              if (that.customType === 'all') {
+                _list = res.data.data.user_data
+              } else if (that.customType === 'direct') {
+                _list = res.data.data.direct_user_data
+              } else {
+                _list = res.data.data.indirect_user_data
+              }
               that.list = that.list.concat(_list)
             }
           } else {
@@ -355,8 +396,7 @@ export default {
       }
       .all{
         position: absolute;
-        .w(47);
-        .left(167);
+        .left(147);
       }
       .sort-desc{
         position: absolute;

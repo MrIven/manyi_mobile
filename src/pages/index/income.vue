@@ -31,8 +31,14 @@
         <div class="detail-word">收益明细</div>
         <div class="year-month">{{pickerShowValue}}</div>
         <div class="icon-down-1" @click="openPicker"></div>
-        <div class="all">全部</div>
-        <div class="icon-down-2" @click="openPicker"></div>
+        <div class="all">
+          <select v-model="customType" @change="queryBySort"  style="background-color: rgba(255,255,255,1)" >
+            <option value="all">全部客户</option>
+            <option value="direct">直接客户</option>
+            <option value="indirect">间接客户</option>
+          </select>
+        </div>
+        <div class="icon-down-2"></div>
         <div class="sort-desc">排序从高到低</div>
       </div>
       <mt-loadmore
@@ -79,6 +85,7 @@ Vue.component(DatetimePicker.name, DatetimePicker)
 export default {
   data () {
     return {
+      customType: 'all',
       pickerValue: new Date(),
       pickerShowValue: moment(new Date()).format('YYYY年MM月'),
       allLoaded: false,
@@ -102,6 +109,27 @@ export default {
     })
   },
   methods: {
+    queryBySort() {
+      incomeApi.getUserRefferGift(
+        {
+          token: localStorage.getItem('token'),
+          choose_date: moment(this.pickerValue).format('YYYY-MM'),
+          type: this.customType,
+          page: this.curPage
+        }).then((res) => {
+        if (res.status === 200) {
+          this.incomeObject = res.data.data
+          if (this.customType === 'all') {
+            this.list = res.incomeObject.user_data
+          } else if (this.customType === 'direct') {
+            this.list = res.incomeObject.direct_user_data
+          } else {
+            this.list = res.incomeObject.indirect_user_data
+          }
+        }
+      }).catch(() => {
+      })
+    },
     scrollTop() {
       document.documentElement.scrollTop = document.body.scrollTop = 0
     },
@@ -150,7 +178,14 @@ export default {
         if (res.status === 200) {
           if (res.data.data) {
             if (type === 'top') {
-              let _list = res.data.data.user_data
+              let _list = []
+              if (that.customType === 'all') {
+                _list = res.data.data.user_data
+              } else if (that.customType === 'direct') {
+                _list = res.data.data.direct_user_data
+              } else {
+                _list = res.data.data.indirect_user_data
+              }
               if (_list.length > 0) {
                 that.list = that.list.concat(_list)
               } else {
@@ -158,7 +193,14 @@ export default {
               }
               this.$refs.loadmore.onTopLoaded()
             } else {
-              let _list = res.data.data.user_data
+              let _list = []
+              if (that.customType === 'all') {
+                _list = res.data.data.user_data
+              } else if (that.customType === 'direct') {
+                _list = res.data.data.direct_user_data
+              } else {
+                _list = res.data.data.indirect_user_data
+              }
               that.list = that.list.concat(_list)
             }
           } else {
@@ -365,7 +407,7 @@ export default {
       text-align: left;
       font-weight: bold;
     }
-    .year-month,.all,.sort-desc{
+    .year-month,.sort-desc{
       position: absolute;
       .w(95);
       .h(24);
@@ -379,8 +421,15 @@ export default {
     }
     .all{
       position: absolute;
-      .w(47);
-      .left(167);
+      .left(152);
+      .h(24);
+      .top(48);
+      color: rgba(42, 130, 228, 1);
+      background-color: rgba(255,255,255,1);
+      .fs(16);
+      line-height: 150%;
+      text-align: left;
+      font-weight: bold;
     }
     .sort-desc{
       position: absolute;
@@ -395,7 +444,7 @@ export default {
       position: absolute;
       .w(24);
       .h(24);
-      .left(109);
+      .left(98);
       .top(48);
       .fs(24);
       color: rgba(42, 130, 228, 1);
@@ -404,7 +453,7 @@ export default {
     }
     .icon-down-2{
       position: absolute;
-      .left(200);
+      .left(212);
     }
   }
   .detail-infos{
@@ -549,4 +598,19 @@ export default {
     }
   }
 }
+select {
+  appearance:none;
+  -moz-appearance:none;
+  -webkit-appearance:none;
+  .pr(22);
+  color: rgba(0, 121, 255, 1);
+  background-color: rgba(255,255,255,1) ;
+  .fs(16);
+  line-height: 150%;
+  text-align: left;
+  font-weight: bold;
+  border: none;
+
+}
+select::-ms-expand { display: none; }
 </style>
