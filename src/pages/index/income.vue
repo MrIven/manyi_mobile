@@ -110,6 +110,7 @@ export default {
   },
   methods: {
     queryBySort() {
+      let that = this
       incomeApi.getUserRefferGift(
         {
           token: localStorage.getItem('token'),
@@ -120,11 +121,14 @@ export default {
         if (res.status === 200) {
           this.incomeObject = res.data.data
           if (this.customType === 'all') {
-            this.list = res.incomeObject.user_data
+            console.log('all')
+            that.list = this.incomeObject.user_data
           } else if (this.customType === 'direct') {
-            this.list = res.incomeObject.direct_user_data
-          } else {
-            this.list = res.incomeObject.indirect_user_data
+            console.log('direct')
+            that.list = this.incomeObject.direct_user_data
+          } else if (this.customType === 'indirect') {
+            console.log('indirect')
+            that.list = this.incomeObject.indirect_user_data
           }
         }
       }).catch(() => {

@@ -122,11 +122,11 @@ export default {
         this.teamObject = res.data.data
         this.list = this.teamObject.user_data
         if (this.customType === 'all') {
-          this.list = res.teamObject.user_data
+          this.list = this.teamObject.user_data
         } else if (this.customType === 'direct') {
-          this.list = res.teamObject.direct_user_data
+          this.list = this.teamObject.direct_user_data
         } else {
-          this.list = res.teamObject.indirect_user_data
+          this.list = this.teamObject.indirect_user_data
         }
       }).catch(() => {
       })
