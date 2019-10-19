@@ -54,7 +54,7 @@
         </div>
         <div class="invitation-desc-1">邀请好友，拿现金</div>
         <div class="invitation-desc-2">邀请奖励无上限</div>
-        <button class="to-invitation">去邀请</button>
+        <button class="to-invitation" @click="to_invite">去邀请</button>
       </div>
       <div class="team-box">
         <div class="my-team">
@@ -161,6 +161,9 @@ export default {
     }),
     personalSetting() {
       this.$router.togo('/personal_setting')
+    },
+    to_invite() {
+      window.location.href = 'http://www.easiroam.cn/share/share_userrefer_info?token=' + this.localtion
     },
     getQueryVariable(variable) {
       var query = window.location.search.substring(1)
@@ -296,7 +299,6 @@ export default {
     }
     .username{
       position: absolute;
-      .w(82);
       .h(30);
       .left(92);
       .top(93);

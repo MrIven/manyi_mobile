@@ -123,9 +123,17 @@ export default {
     toWithdrawMoney(flag) {
       if (flag) {
         this.alertMsgVisible = true
-        this.alertMessage = '暂不支持支付宝'
+        this.alertMessage = '暂不支持支付宝！'
       } else {
-        this.popupVisible = true
+        if (this.withdrawObj !== null) {
+          if (this.withdrawObj.weixin_account !== null && this.withdrawObj.wexin_account !== '') {
+            this.popupVisible = true
+          } else {
+            alert('请前往APP绑定微信用户信息！')
+          }
+        } else {
+          alert('系统故障，请联系管理员！')
+        }
       }
     },
     back() {

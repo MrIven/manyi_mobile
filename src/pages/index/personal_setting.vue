@@ -8,13 +8,13 @@
       <div class="ali-icon"></div>
       <div class="account-desc">支付宝账号</div>
       <div class="is-setting">{{alipay_is_bound?'已绑定':'未设置'}}</div>
-      <div class="right-arrow"></div>
+      <div class="right-arrow" @click="updateStatus('alipay')"></div>
     </div>
     <div class="wechat-setting">
       <div class="wechat-icon"></div>
       <div class="account-desc">微信账号&nbsp;&nbsp;&nbsp;</div>
       <div class="is-setting">{{weixin_is_bound ?'已绑定':'未设置'}}</div>
-      <div class="right-arrow"></div>
+      <div class="right-arrow" @click="updateStatus('wechat')"></div>
     </div>
   </div>
 </template>
@@ -22,6 +22,9 @@
 <script>
 import commonHeader from 'common/common-header'
 import * as settingApi from 'api/setting-api'
+import { Switch, Button } from 'mint-ui'
+import Vue from 'vue'
+Vue.component(Switch.name, Switch, Button.name, Button)
 export default {
   data() {
     return {
@@ -46,6 +49,13 @@ export default {
   methods: {
     back() {
       this.$router.goBack()
+    },
+    updateStatus(type) {
+      if (type === 'alipay') {
+        alert('暂未开放！')
+      } else {
+        alert('请前往APP内绑定账号！')
+      }
     }
   },
   components: {
@@ -141,5 +151,12 @@ export default {
     color: #000;
     background-image: url("../../assets/imgs/personal_setting/arrow-right.svg");
     background-size: cover;
+  }
+  .switch{
+    .mt(15);
+    .mr(20);
+    float:right;
+    background-color:#fcffff;
+    display: inline-block;
   }
 </style>
