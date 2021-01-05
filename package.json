@@ -14,7 +14,7 @@
     "build:test": "cross-env DEV_ENV=test NODE_ENV=production node build/build.js"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "cross-env": "^5.2.0",
     "fastclick": "^1.0.6",
     "js-cookie": "^2.2.0",
